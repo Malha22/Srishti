@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Srishti — Gallery</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080c14;--card:#0d1420;--cyan:#b700ff;--violet:#7c3aed;--white:#e8eaed;--muted:#8b96a8;--border:#1c2538}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:Inter,sans-serif;overflow-x:hidden}
+a{color:inherit}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.28;background-image:linear-gradient(rgba(183,0,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(183,0,255,.025) 1px,transparent 1px);background-size:45px 45px;z-index:-1}
+nav{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 6%;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(8,12,20,.82);backdrop-filter:blur(14px);position:sticky;top:0;z-index:20}
+.nav-logo{font-family:Orbitron,sans-serif;text-decoration:none;font-weight:900;letter-spacing:.08em;font-size:1.15rem}.nav-logo span{color:var(--cyan)}
+.nav-links{display:flex;gap:1.7rem;list-style:none}.nav-links a{text-decoration:none;color:rgba(255,255,255,.58);font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;transition:.2s}.nav-links a:hover,.nav-links .active{color:#fff}.nav-cta{border:1px solid rgba(183,0,255,.5);padding:.55rem .85rem;color:var(--cyan)!important}
+.hero{position:relative;text-align:center;padding:105px 7% 75px;overflow:hidden}.hero:after{content:"";position:absolute;width:700px;height:300px;left:50%;top:20px;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(183,0,255,.14),transparent 68%);pointer-events:none}.kicker{position:relative;z-index:1;font:600 .62rem Orbitron,sans-serif;letter-spacing:.32em;color:var(--cyan);text-transform:uppercase}.hero h1{position:relative;z-index:1;font:900 clamp(2.8rem,7vw,6rem)/1 Orbitron,sans-serif;letter-spacing:.04em;margin:14px 0}.hero h1 span{color:var(--cyan)}.hero p{position:relative;z-index:1;max-width:650px;margin:auto;color:var(--muted);font-size:.92rem;line-height:1.8}.hero-meta{position:relative;z-index:1;display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap}.hero-meta span{border:1px solid var(--border);padding:7px 11px;color:#687386;font:500 .58rem Orbitron,sans-serif;letter-spacing:.1em}
+.gallery-wrap{max-width:1250px;margin:0 auto;padding:10px 6% 110px}.filters{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:0 0 42px}.filter{background:transparent;color:var(--muted);border:1px solid var(--border);padding:9px 15px;font:600 .6rem Orbitron,sans-serif;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:.25s}.filter:hover,.filter.active{color:#fff;border-color:var(--cyan);background:rgba(183,0,255,.07);box-shadow:0 0 18px rgba(183,0,255,.12)}
+.gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-auto-rows:350px;
+  gap:24px;
+  align-items:stretch;
+}
+.gallery-card{
+  position:relative;
+  overflow:hidden;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:24px;
+  min-height:350px;
+  cursor:pointer;
+  transition:transform .35s,border-color .35s,box-shadow .35s;
+}
+.gallery-card:nth-child(n){
+  grid-column:span 1;
+  grid-row:span 1;
+}
+.gallery-card:hover{
+  transform:translate3d(var(--mx,0px),calc(-5px + var(--my,0px)),0);
+  border-color:rgba(183,0,255,.65);
+  box-shadow:0 15px 40px rgba(0,0,0,.35),0 0 28px rgba(183,0,255,.09);
+}
+.gallery-card.hide{display:none}
+.gallery-card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  filter:saturate(.88) contrast(1.05);
+  transition:transform .6s,filter .4s;
+}
+.gallery-card:hover img{
+  transform:scale(1.06);
+  filter:saturate(1.08) contrast(1.05);
+}
+.gallery-card:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,transparent 42%,rgba(0,0,0,.78));
+  pointer-events:none;
+}
+.card-info{
+  position:absolute;
+  z-index:2;
+  left:18px;
+  right:18px;
+  bottom:16px;
+}
+.card-tag{font:600 .52rem Orbitron,sans-serif;letter-spacing:.18em;color:var(--cyan);text-transform:uppercase}
+.card-info h3{font:600 1rem Orbitron,sans-serif;margin-top:5px}
+.card-info p{color:#a3adbd;font-size:.68rem;margin-top:3px}
+.section-note{text-align:center;color:#626e80;font-size:.72rem;letter-spacing:.04em;margin-top:28px}
+.lightbox{position:fixed;inset:0;background:rgba(2,5,10,.92);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:30px;z-index:100}.lightbox.open{display:flex}.lightbox img{max-width:min(1100px,92vw);max-height:82vh;object-fit:contain;border:1px solid rgba(183,0,255,.35);box-shadow:0 0 60px rgba(183,0,255,.15)}.close{position:absolute;right:28px;top:22px;width:42px;height:42px;background:transparent;color:#fff;border:1px solid var(--border);font-size:22px;cursor:pointer}.lb-caption{position:absolute;left:50%;transform:translateX(-50%);bottom:20px;color:#aab2c0;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase}
+footer{border-top:1px solid rgba(255,255,255,.06);padding:35px 6%;display:flex;justify-content:space-between;align-items:center;gap:20px;color:#687386;font-size:.7rem}footer strong{font-family:Orbitron,sans-serif;color:#fff;letter-spacing:.08em}footer span{color:var(--cyan)}
+
+/* ===== GALLERY LAYOUT — 4 equal rounded image cards ===== */
+/* The animation/effects below are intentionally preserved. */
+
+/* ===== SCROLL / PARALLAX GALLERY ANIMATION ===== */
+.gallery-wrap{
+  perspective:1200px;
+}
+
+.gallery-card{
+  opacity:0;
+  transform:translateY(70px) scale(.96);
+  transition:
+    opacity .8s cubic-bezier(.2,.7,.2,1),
+    transform .8s cubic-bezier(.2,.7,.2,1),
+    border-color .35s,
+    box-shadow .35s;
+  will-change:transform,opacity;
+}
+
+.gallery-card.reveal{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+
+/* Staggered entrance */
+.gallery-card:nth-child(1){transition-delay:.03s}
+.gallery-card:nth-child(2){transition-delay:.10s}
+.gallery-card:nth-child(3){transition-delay:.17s}
+.gallery-card:nth-child(4){transition-delay:.24s}
+.gallery-card:nth-child(5){transition-delay:.31s}
+.gallery-card:nth-child(6){transition-delay:.38s}
+.gallery-card:nth-child(7){transition-delay:.45s}
+.gallery-card:nth-child(8){transition-delay:.52s}
+.gallery-card:nth-child(9){transition-delay:.59s}
+.gallery-card:nth-child(10){transition-delay:.66s}
+
+/* Moving light sweep */
+.gallery-card .card-info{
+  transform:translateY(14px);
+  opacity:0;
+  transition:transform .45s ease, opacity .45s ease;
+}
+.gallery-card.reveal .card-info{
+  transform:translateY(0);
+  opacity:1;
+}
+
+.gallery-card::before{
+  content:"";
+  position:absolute;
+  inset:-30%;
+  z-index:1;
+  background:linear-gradient(
+    115deg,
+    transparent 42%,
+    rgba(183,0,255,.18) 50%,
+    transparent 58%
+  );
+  transform:translateX(-65%) rotate(8deg);
+  transition:transform .9s ease;
+  pointer-events:none;
+}
+.gallery-card:hover::before{
+  transform:translateX(65%) rotate(8deg);
+}
+
+/* Featured cards have stronger movement */
+.gallery-card:nth-child(1).reveal{
+  transform:translateY(0) scale(1);
+}
+.gallery-card:nth-child(1):hover{
+  transform:translateY(-10px) scale(1.015);
+}
+.gallery-card:nth-child(8):hover{
+  transform:translateY(-8px) scale(1.012);
+}
+
+/* Hero entrance */
+.hero .kicker,
+.hero h1,
+.hero p,
+.hero-meta{
+  opacity:0;
+  transform:translateY(25px);
+  animation:heroIn .8s cubic-bezier(.2,.7,.2,1) forwards;
+}
+.hero h1{animation-delay:.12s}
+.hero p{animation-delay:.24s}
+.hero-meta{animation-delay:.36s}
+
+@keyframes heroIn{
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Filtered cards animate back in */
+.gallery-card.filter-in{
+  animation:filterIn .45s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes filterIn{
+  from{opacity:0;transform:translateY(25px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Lightbox cinematic zoom */
+.lightbox.open img{
+  animation:lightboxIn .45s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes lightboxIn{
+  from{opacity:0;transform:scale(.86)}
+  to{opacity:1;transform:scale(1)}
+}
+
+/* Subtle floating glow behind gallery */
+.gallery-wrap::before{
+  content:"";
+  position:absolute;
+  width:420px;
+  height:420px;
+  left:-220px;
+  top:720px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(183,0,255,.10),transparent 70%);
+  pointer-events:none;
+  animation:floatGlow 8s ease-in-out infinite;
+}
+@keyframes floatGlow{
+  0%,100%{transform:translate3d(0,0,0)}
+  50%{transform:translate3d(70px,-35px,0)}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    scroll-behavior:auto!important;
+    transition-duration:.01ms!important;
+  }
+}
+
+@media(max-width:850px){.nav-links{gap:.7rem}.nav-links a{font-size:.55rem}.gallery-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:280px}.gallery-card,.gallery-card:nth-child(n){grid-column:span 1;grid-row:span 1;min-height:280px}.gallery-card:nth-child(1),.gallery-card:nth-child(8){grid-column:span 1}.hero{padding-top:75px}}
+@media(max-width:560px){nav{padding:0 4%}.nav-links{display:none}.hero{padding:70px 6% 55px}.gallery-wrap{padding-left:4%;padding-right:4%}.gallery-grid{grid-template-columns:1fr;grid-auto-rows:240px;gap:16px}.gallery-card,.gallery-card:nth-child(n),.gallery-card:nth-child(1),.gallery-card:nth-child(8){grid-column:span 1;grid-row:span 1;min-height:240px;border-radius:20px}footer{flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">SRISH<span>TI</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html#about">About</a></li><li><a href="index.html#rovers">Rovers</a></li><li><a href="index.html#competitions">Competitions</a></li><li><a href="index.html#achievements">Achievements</a></li><li><a href="index.html#departments">Departments</a></li><li><a href="index.html#team">Team</a></li><li><a class="active" href="gallery.html">Gallery</a></li><li><a class="nav-cta" href="index.html">Contact</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <span class="kicker">SRISHTI ROBOTICS TEAM</span>
+  <h1>OUR <span>GALLERY</span></h1>
+  <p>Moments from our builds, testing sessions, competitions, workshops, and the people behind every robotic system.</p>
+  <div class="hero-meta"><span>BUILD</span><span>TEST</span><span>COMPETE</span><span>INNOVATE</span></div>
+</header>
+
+<main class="gallery-wrap">
+  <div class="filters">
+    <button class="filter active" data-filter="all">ALL</button>
+    <button class="filter" data-filter="rover">ROVERS</button>
+    <button class="filter" data-filter="team">TEAM</button>
+    <button class="filter" data-filter="workshop">WORKSHOP</button>
+  </div>
+
+  <section class="gallery-grid">
+    <article class="gallery-card" data-category="rover" data-title="PRANA — Rover System"><img src="1rover.JPG" alt="Srishti rover system"><div class="card-info"><span class="card-tag">Rovers</span><h3>PRANA — ROVER SYSTEM</h3><p>Built for mobility, autonomy and exploration.</p></div></article>
+    <article class="gallery-card" data-category="rover" data-title="PRANA — Front View"><img src="2rover.jpg" alt="Prana rover"><div class="card-info"><span class="card-tag">Rovers</span><h3>PRANA</h3><p>Mechanical and electronic systems working together.</p></div></article>
+    <article class="gallery-card" data-category="team" data-title="Team Srishti"><img src="ACH2.png" alt="Srishti robotics team"><div class="card-info"><span class="card-tag">Team</span><h3>THE TEAM</h3><p>The people behind the machines.</p></div></article>
+    <article class="gallery-card" data-category="rover" data-title="PRANA — Front View"><img src="4rover.png" alt="Prana rover"><div class="card-info"><span class="card-tag">Rovers</span><h3>PRANA 3</h3><p>Mechanical and electronic systems working together.</p></div></article>
+    <article class="gallery-card" data-category="team" data-title="Team Srishti"><img src="MISSION AND VISION.jpg" alt="Srishti robotics team"><div class="card-info"><span class="card-tag">Team</span><h3>THE TEAM</h3><p>The people behind the machines.</p></div></article>
+    <article class="gallery-card" data-category="rover" data-title="Competition Ready"><img src="3rover.jpg" alt="Competition rover testing"><div class="card-info"><span class="card-tag">Rovers</span><h3>COMPETITION READY</h3><p>Engineering under real-world constraints.</p></div></article>
+    <article class="gallery-card" data-category="team" data-title="Team Srishti"><img src="ABOUT TEAM.png" alt="Srishti robotics team"><div class="card-info"><span class="card-tag">Team</span><h3>THE TEAM</h3><p>The people behind the machines.</p></div></article>
+    <article class="gallery-card" data-category="team" data-title="Team in Action"><img src="ACH1.png" alt="Team achievement"><div class="card-info"><span class="card-tag">Team</span><h3>TEAM IN ACTION</h3><p>Collaboration that turns ideas into results.</p></div></article>
+    <article class="gallery-card" data-category="workshop" data-title="Technical Work"><img src="1work.jpg" alt="Technical work on rover"><div class="card-info"><span class="card-tag">Workshop</span><h3>TECHNICAL WORK</h3><p>Detail, iteration and engineering discipline.</p></div></article>
+  </section>
+  <p class="section-note">Click any image to view it in full size.</p>
+</main>
+
+<div class="lightbox" id="lightbox"><button class="close" id="close">×</button><img id="lightboxImg" src="" alt=""><div class="lb-caption" id="caption"></div></div>
+
+<footer><strong>SRISH<span>TI</span> ROBOTICS TEAM</strong><div>© 2026 Team Srishti — MACE, Kothamangalam</div><a href="index.html">Back to Home ↗</a></footer>
+
+<script>
+const filters = document.querySelectorAll('.filter');
+const cards = document.querySelectorAll('.gallery-card');
+
+/* Scroll reveal: cards enter as they reach the viewport */
+const revealObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('reveal');
+      observer.unobserve(entry.target);
+    }
+  });
+}, {
+  threshold: 0.12,
+  rootMargin: "0px 0px -60px 0px"
+});
+
+cards.forEach(card => revealObserver.observe(card));
+
+/* Category filtering */
+function filterGallery(category) {
+  cards.forEach((card, index) => {
+    const isMatch =
+      category === "all" ||
+      card.dataset.category === category;
+
+    if (isMatch) {
+      card.classList.remove("hide");
+      card.style.display = "";
+
+      // Restart the filter animation
+      card.classList.remove("filter-in");
+      void card.offsetWidth;
+      card.classList.add("filter-in");
+      card.style.animationDelay = `${index * 55}ms`;
+    } else {
+      card.classList.add("hide");
+      card.style.display = "none";
+      card.classList.remove("filter-in");
+    }
+  });
+}
+
+filters.forEach(btn => {
+  btn.addEventListener("click", () => {
+    filters.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    filterGallery(btn.dataset.filter);
+  });
+});
+
+// Show all images when the Gallery page first opens.
+filterGallery("all");
+
+/* Cinematic lightbox */
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightboxImg');
+const caption = document.getElementById('caption');
+
+cards.forEach(card => {
+  card.addEventListener('click', () => {
+    if (card.classList.contains('hide')) return;
+
+    const image = card.querySelector('img');
+
+    lightboxImg.src = image.src;
+    lightboxImg.alt = image.alt;
+    caption.textContent = card.dataset.title;
+
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+function closeLightbox() {
+  lightbox.classList.remove('open');
+  lightboxImg.src = '';
+  document.body.style.overflow = '';
+}
+
+document.getElementById('close').addEventListener('click', closeLightbox);
+
+lightbox.addEventListener('click', event => {
+  if (event.target === lightbox) closeLightbox();
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeLightbox();
+});
+
+/* Gentle mouse parallax on desktop */
+const gallery = document.querySelector('.gallery-grid');
+
+if (window.matchMedia('(pointer:fine)').matches) {
+  gallery.addEventListener('mousemove', event => {
+    const rect = gallery.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+
+    cards.forEach((card, index) => {
+      if (card.classList.contains('hide')) return;
+
+      const strength = index === 0 ? 4 : 2;
+      card.style.setProperty(
+        '--mx',
+        `${x * strength}px`
+      );
+      card.style.setProperty(
+        '--my',
+        `${y * strength}px`
+      );
+    });
+  });
+
+  gallery.addEventListener('mouseleave', () => {
+    cards.forEach(card => {
+      card.style.setProperty('--mx', '0px');
+      card.style.setProperty('--my', '0px');
+    });
+  });
+}
+</script>
+</body>
+</html>
