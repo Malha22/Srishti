@@ -289,8 +289,6 @@ h2 { font-family:'Orbitron',sans-serif; font-weight:700; font-size:clamp(1.6rem,
 .overlay-info { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(8,12,20,0.95) 0%, rgba(8,12,20,0.7) 70%, transparent 100%); padding: 2.5rem 1.4rem 1.4rem; z-index: 8; transform: translateY(8px); transition: transform .4s ease; }
 .about-photo-wrap:hover .overlay-info { transform: translateY(0); }
 .overlay-label { font-family: 'Orbitron', sans-serif; font-size: .65rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--cyan); display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem; }
-.overlay-label::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); animation: blink 1s step-end infinite; }
-@keyframes blink { 50% { opacity: 0; } }
 .overlay-title { font-family: 'Orbitron', sans-serif; font-size: clamp(.9rem, 2vw, 1.1rem); font-weight: 800; color: var(--white); letter-spacing: .04em; margin-bottom: .35rem; }
 .overlay-sub { font-size: .75rem; color: var(--muted); line-height: 1.5; }
 .about-photo-wrap { transition: box-shadow .4s ease, border-color .4s ease; }
@@ -339,29 +337,6 @@ h2 { font-family:'Orbitron',sans-serif; font-weight:700; font-size:clamp(1.6rem,
   z-index:4;
 }
 
-.projects-header .garage-kicker{
-  display:inline-flex;
-  align-items:center;
-  gap:.55rem;
-  font-family:'Orbitron',sans-serif;
-  font-size:.58rem;
-  font-weight:700;
-  letter-spacing:.28em;
-  text-transform:uppercase;
-  color:#c084fc;
-  border:1px solid rgba(168,85,247,.35);
-  background:rgba(124,58,237,.08);
-  padding:.42rem .8rem;
-}
-
-.projects-header .garage-kicker::before{
-  content:'';
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#a855f7;
-  box-shadow:0 0 10px #a855f7;
-}
 
 .projects-header h2{
   margin-top:.85rem;
@@ -400,7 +375,7 @@ h2 { font-family:'Orbitron',sans-serif; font-weight:700; font-size:clamp(1.6rem,
   overflow:hidden;
   border:1px solid rgba(168,85,247,.42);
   border-radius:10px;
-  background:#050509 url("pran.png") center center / cover no-repeat;
+  background: #050509 url("pran.png") center center / cover no-repeat;
   box-shadow:
     0 0 0 1px rgba(255,255,255,.025),
     0 0 45px rgba(90,30,255,.12),
@@ -557,14 +532,7 @@ h2 { font-family:'Orbitron',sans-serif; font-weight:700; font-size:clamp(1.6rem,
   text-shadow:0 0 12px rgba(255,255,255,.18);
 }
 
-.garage-rover-name-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#c026ff;
-  box-shadow:0 0 10px #c026ff;
-  animation:garagePranaBlink 1.5s ease-in-out infinite;
-}
+
 
 .garage-rover-name small{
   color:#b66cff;
@@ -574,10 +542,7 @@ h2 { font-family:'Orbitron',sans-serif; font-weight:700; font-size:clamp(1.6rem,
   margin-left:.15rem;
 }
 
-@keyframes garagePranaBlink{
-  0%,100%{ opacity:1; }
-  50%{ opacity:.45; }
-}
+
 
 
 /* ══ ROVER GARAGE — HOVER GLOW ONLY ══
@@ -1776,7 +1741,6 @@ footer { background:var(--surface); border-top:1px solid var(--border); padding:
 <!-- PROJECTS / MARS GARAGE -->
 <section id="projects">
   <div class="projects-header">
-    <span class="garage-kicker">4. MARS GARAGE</span>
     <h2>MARS <span>GARAGE</span></h2>
     <span class="proj-title-line"></span>
     <p>Explore · Engineer · Deploy</p>
@@ -1820,10 +1784,7 @@ footer { background:var(--surface); border-top:1px solid var(--border); padding:
     <div class="garage-rover-counter" id="garageCounter">ROVER 1 / 6</div>
   </div>
 
-  <div class="garage-project-count">
-    <span>ROVER PROJECT ARCHIVE</span>
-    <strong>06 PROJECTS</strong>
-  </div>
+  
 
 </section>
 
@@ -1875,6 +1836,31 @@ footer { background:var(--surface); border-top:1px solid var(--border); padding:
       <div class="comp-tl-item"><div class="comp-tl-dot"></div><div class="comp-tl-year">2023</div><div class="comp-tl-event">IRC · Asia Pacific Robotics</div><div class="comp-tl-where">📍 Tokyo, Japan</div><span class="comp-result-tag result-gold" style="font-size:.6rem;padding:.15rem .5rem;">🥇 1st Place</span></div>
       <div class="comp-tl-item"><div class="comp-tl-dot"></div><div class="comp-tl-year">2024</div><div class="comp-tl-event">ERC · European Rover Challenge</div><div class="comp-tl-where">📍 Poland</div><span class="comp-result-tag result-qual" style="font-size:.6rem;padding:.15rem .5rem;">✦ Represented MACE</span></div>
       <div class="comp-tl-item"><div class="comp-tl-dot"></div><div class="comp-tl-year">2026</div><div class="comp-tl-event">IRC Finals Qualification</div><div class="comp-tl-where">📍 On-site Finals</div><span class="comp-result-tag result-qual" style="font-size:.6rem;padding:.15rem .5rem;">✦ Design Review Cleared</span></div>
+    </div>
+  </div>
+  <div class="ach-dots" id="achDots"></div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="ach-stars" id="achStars"></div>
+  <div class="ach-header reveal">
+    <h2>Our Achievements</h2>
+    <span class="ach-line"></span>
+    <p>Our journey of excellence</p>
+  </div>
+  <div style="position:relative;">
+    <button class="ach-arrow ach-prev" onclick="achMove(-1)" aria-label="Previous">&#8249;</button>
+    <button class="ach-arrow ach-next" onclick="achMove(1)" aria-label="Next">&#8250;</button>
+    <div class="ach-track-wrap">
+      <div class="ach-track" id="achTrack">
+        <div class="ach-card reveal"><span class="ach-rank">🥇 1st Rank · Competition 2023</span><div class="ach-visual"><img src="ACH1.png" alt="1st Rank" style="width:100%;height:100%;object-fit:cover;object-position:center top;position:absolute;inset:0;z-index:1;"/></div><div class="ach-caption"><p>Secured <strong>1st Rank</strong> at IEEE ASIA PACIFIC REGION 10 Robotics Competition at Tokyo, Japan</p></div></div>
+        <div class="ach-card reveal"><span class="ach-rank">🥈 2nd Rank · Competition 2022</span><div class="ach-visual"><img src="ACH2.png" alt="2nd Rank" style="width:100%;height:100%;object-fit:cover;object-position:center top;position:absolute;inset:0;z-index:1;"/></div><div class="ach-caption"><p>Secured <strong>1st Runner up</strong> in IEEE ASIA PACIFIC REGION 10 Robotics Competition at Bangkok, Thailand</p></div></div>
+        <div class="ach-card reveal"><span class="ach-rank">🏅 Best Paper · ICEEE 2023</span><div class="ach-visual"><div class="ach-visual-emoji">📄</div></div><div class="ach-caption"><p>Won <strong>Best Paper Award</strong> at ICEEE 2023 for the research paper on TinyML-based acoustic crop pest detection using Edge Impulse.</p></div></div>
+        <div class="ach-card reveal"><span class="ach-rank">🥇 1st Place · MACE Techfest 2023</span><div class="ach-visual"><div class="ach-visual-emoji">🤖</div></div><div class="ach-caption"><p>LineBot clinched <strong>1st Place</strong> in the Line Follower Robotics event at MACE Techfest 2023, beating 18 competing teams.</p></div></div>
+        <div class="ach-card reveal"><span class="ach-rank">🌟 Top 10 · Kerala Startup Mission</span><div class="ach-visual"><div class="ach-visual-emoji">🚀</div></div><div class="ach-caption"><p>Land Mine Detection Rover was selected in the <strong>Top 10 AgriTech Ideas</strong> at the Kerala Startup Mission student innovation challenge 2023.</p></div></div>
+        <div class="ach-card reveal"><span class="ach-rank">🏆 Best Project · ECE Dept 2024</span><div class="ach-visual"><div class="ach-visual-emoji">⚡</div></div><div class="ach-caption"><p>MeshSense awarded <strong>Best Final Year Project</strong> by the ECE Department, MACE for its innovative campus-wide IoT mesh architecture.</p></div></div>
+      </div>
     </div>
   </div>
   <div class="ach-dots" id="achDots"></div>
@@ -2089,7 +2075,7 @@ footer { background:var(--surface); border-top:1px solid var(--border); padding:
         </div>
         <div class="contact-item">
           <div class="contact-item-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></div>
-          <div><strong>Email</strong><a href="mailto:srishti@mace.ac.in">srishti@mace.ac.in</a></div>
+          <div><strong>Email</strong><a href="mailto:teamsrishti00@gmail.com">teamsrishti00@gmail.com</a></div>
         </div>
         <div class="contact-item">
           <div class="contact-item-icon"><svg viewBox="0 0 24 24"><path d="M6.6 3.5 9 3l2 5-2.2 1.6a16 16 0 0 0 5.6 5.6L16 13l5 2 .5 2.4a2 2 0 0 1-2 2.4C11.5 19.4 4.6 12.5 4.2 4.5a2 2 0 0 1 2.4-1z"/></svg></div>
@@ -2126,7 +2112,6 @@ footer { background:var(--surface); border-top:1px solid var(--border); padding:
         <div class="form-field"><label for="contactMessage">Message</label><textarea id="contactMessage" name="message" placeholder="Write your message here..." required></textarea></div>
         <button class="form-submit" type="submit">SEND MESSAGE <span>→</span></button>
         <div class="contact-status" id="contactStatus" aria-live="polite"></div>
-        <div class="contact-note">This front-end form currently prepares the message locally. Connect it to your preferred email/form backend before deployment.</div>
       </form>
     </div>
   </div>
