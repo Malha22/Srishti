@@ -1,0 +1,2846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Srishti — Mar Athanasius College of Engineering</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:      #080C14;
+  --surface: #0E1421;
+  --card:    #111927;
+  --indigo:  #7C3AED;
+  --cyan:    #b700ff;
+  --white:   #E8EAED;
+  --muted:   #8B96A8;
+  --border:  #1C2538;
+  --glow:    rgba(124,58,237,0.4);
+
+}
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--white); font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.6; overflow-x: hidden; cursor: none; }
+a, button, .showcase-nav, .dot, .hamburger, .member-card, .mini-stat, .nav-links a, input, textarea, label { cursor: none; }
+
+/* ══ CUSTOM GLOW CURSOR ══ */
+#cursor-dot {
+  position: fixed; width: 8px; height: 8px;
+  background: var(--cyan); border-radius: 50%;
+  pointer-events: none; z-index: 99999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 6px var(--cyan), 0 0 14px rgba(183,0,255,0.7), 0 0 28px rgba(183,0,255,0.35);
+  mix-blend-mode: screen;
+  transition: width .15s, height .15s, background .2s, box-shadow .2s;
+  will-change: left, top;
+}
+#cursor-dot.hovering { width: 12px; height: 12px; background: #fff; box-shadow: 0 0 8px var(--cyan), 0 0 20px rgba(183,0,255,0.9), 0 0 40px rgba(124,58,237,0.5); }
+#cursor-dot.clicking { width: 5px; height: 5px; box-shadow: 0 0 16px var(--cyan), 0 0 32px rgba(183,0,255,1); }
+#cursor-ring {
+  position: fixed; width: 38px; height: 38px;
+  border: 1.5px solid rgba(183,0,255,0.5); border-radius: 50%;
+  pointer-events: none; z-index: 99998;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(183,0,255,0.12), inset 0 0 10px rgba(183,0,255,0.06);
+  transition: width .22s ease, height .22s ease, border-color .22s, opacity .22s;
+  will-change: left, top;
+}
+#cursor-ring.hovering { width: 56px; height: 56px; border-color: rgba(124,58,237,0.7); }
+#cursor-ring.clicking { width: 28px; height: 28px; border-color: var(--cyan); opacity: .4; }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%; height: 64px;
+  background: rgba(8,12,20,0.75); backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.nav-logo { font-family:'Orbitron',sans-serif; font-weight:900; font-size:1.1rem; letter-spacing:.15em; color:var(--white); text-decoration:none; }
+.nav-logo span { color:var(--cyan); }
+.nav-links { display:flex; gap:2rem; list-style:none; }
+.nav-links a { color:rgba(255,255,255,0.55); text-decoration:none; font-size:.75rem; font-weight:500; letter-spacing:.08em; text-transform:uppercase; transition:color .2s; }
+.nav-links a:hover { color:var(--white); }
+.nav-cta { background:var(--indigo); color:var(--white)!important; padding:.42rem 1.1rem; border-radius:3px; transition:background .2s,box-shadow .2s!important; }
+.nav-cta:hover { background:#9F67FF!important; box-shadow:0 0 16px var(--glow); }
+.hamburger { display:none; flex-direction:column; gap:5px; }
+.hamburger span { width:24px; height:2px; background:var(--white); border-radius:2px; }
+
+/* ══════════════════════
+   HERO — NEW LAYOUT
+══════════════════════ */
+#hero {
+   position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 64px 5% 60px;
+    overflow: hidden;
+
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(5, 6, 15, 0.72) 0%,
+            rgba(5, 6, 15, 0.40) 40%,
+            rgba(5, 6, 15, 0.08) 100%
+        ),
+        url("ROVER.png");
+
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+/* deep space starfield bg */
+#hero-stars-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+
+/* subtle ground glow like reference */
+.hero-ground-glow {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 45%;
+  background: radial-gradient(ellipse at 60% 100%, rgba(80,40,160,0.35) 0%, rgba(30,10,80,0.18) 40%, transparent 70%);
+  pointer-events: none;
+  z-index: 1;
+}
+.hero-ground-glow::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 20%; right: 0;
+  height: 200px;
+  background: radial-gradient(ellipse at 55% 100%, rgba(120,60,255,0.25) 0%, transparent 65%);
+}
+
+/* Left content */
+.hero-left {
+  position: relative; z-index: 3;
+  padding: 64px 0 60px 7%;
+  flex: 0 0 52%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.hero-team-tag {
+  display: inline-flex; align-items: center; gap: .55rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: .62rem; font-weight: 700;
+  letter-spacing: .28em; text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 1.8rem;
+}
+.hero-team-tag::before {
+  content: ''; width: 22px; height: 1px;
+  background: rgba(255,255,255,0.3);
+}
+
+.hero-title-top {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.6rem, 5.5vw, 5rem);
+  line-height: 1;
+  letter-spacing: .04em;
+  color: var(--white);
+  text-transform: uppercase;
+  margin-bottom: .2rem;
+}
+.hero-title-sub {
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.6rem, 5.5vw, 5rem);
+  line-height: 1;
+  letter-spacing: .04em;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 2.4rem;
+}
+
+.hero-taglines {
+  margin-bottom: 2.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+.hero-tagline {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(.62rem, 1.1vw, .78rem);
+  font-weight: 600;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.6;
+}
+
+.hero-cta-row {
+  display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+}
+.btn-discover {
+  display: inline-flex; align-items: center; gap: .6rem;
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,0.35);
+  padding: .7rem 1.8rem;
+  border-radius: 2px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: .65rem; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  text-decoration: none;
+  transition: border-color .25s, background .25s, box-shadow .25s, transform .2s;
+}
+.btn-discover:hover {
+  border-color: var(--cyan);
+  background: rgba(183,0,255,0.08);
+  box-shadow: 0 0 20px rgba(183,0,255,0.25);
+  transform: translateY(-2px);
+}
+.btn-discover svg { opacity: .7; transition: transform .2s; }
+.btn-discover:hover svg { transform: translateX(3px); opacity: 1; }
+
+.btn-join {
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--indigo);
+  color: var(--white);
+  border: none;
+  padding: .7rem 1.8rem;
+  border-radius: 2px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: .65rem; font-weight: 700;
+  letter-spacing: .2em; text-transform: uppercase;
+  text-decoration: none;
+  transition: background .2s, box-shadow .2s, transform .2s;
+}
+.btn-join:hover {
+  background: #9F67FF;
+  box-shadow: 0 0 24px rgba(124,58,237,0.5);
+  transform: translateY(-2px);
+}
+
+/* Right — rover image */
+.hero-right {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 58%;
+  z-index: 2;
+  display: flex; align-items: flex-end; justify-content: flex-end;
+  overflow: hidden;
+}
+.hero-rover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 15%, black 35%, black 100%),
+              linear-gradient(to top, black 60%, transparent 100%);
+  mask-composite: intersect;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.3) 15%, black 35%, black 100%),
+                      linear-gradient(to top, black 60%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  filter: brightness(0.85) contrast(1.1);
+}
+
+/* scroll indicator */
+.hero-scroll {
+  position: absolute; bottom: 2rem; left: 7%;
+  display: flex; align-items: center; gap: .7rem;
+  font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,0.25); z-index: 3;
+  font-family: 'Orbitron', sans-serif;
+}
+.hero-scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(183,0,255,0.5), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse { 0%,100%{opacity:.3}50%{opacity:1} }
+
+/* ─── STATS BAR ─── */
+#stats { background:var(--surface); border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:2.5rem 5%; display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+.stat { text-align:center; }
+.stat-num { font-family:'Orbitron',sans-serif; font-size:2rem; font-weight:700; color:var(--cyan); display:block; line-height:1; margin-bottom:.3rem; }
+.stat-label { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.12em; }
+
+/* ─── SECTION commons ─── */
+.section-eyebrow { font-size:.7rem; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:var(--indigo); display:flex; align-items:center; gap:.5rem; margin-bottom:.8rem; }
+.section-eyebrow::after { content:''; flex:1; height:1px; background:var(--border); }
+h2 { font-family:'Orbitron',sans-serif; font-weight:700; font-size:clamp(1.6rem,3.5vw,2.6rem); line-height:1.15; }
+.section-desc { color:var(--muted); max-width:540px; margin-top:.8rem; font-size:.95rem; }
+
+/* ─── ABOUT ─── */
+#about { position: relative; background: #000; overflow: hidden; padding: 5rem 6%; }
+#about::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 15% 50%, rgba(124,58,237,0.07) 0%, transparent 55%), radial-gradient(ellipse at 85% 30%, rgba(0,229,255,0.05) 0%, transparent 50%); z-index:0; }
+.about-section-title { text-align: center; font-family: 'Orbitron', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; color: var(--white); margin-bottom: 0.5rem; position: relative; z-index: 2; }
+.about-title-line { display: block; width: 80px; height: 3px; background: linear-gradient(90deg, var(--indigo), var(--cyan)); margin: 0.5rem auto 3.5rem; border-radius: 2px; position: relative; z-index: 2; }
+.about-block { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center; position: relative; z-index: 2; margin-bottom: 5rem; }
+.about-photo-wrap { border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); position: relative; aspect-ratio: 4/3; background: var(--card); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 1rem; }
+.about-photo-wrap::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 40px rgba(0,0,0,0.4); border-radius: 14px; }
+.about-photo-wrap img { width:100%; height:100%; object-fit:cover; border-radius:14px; transition: transform .5s ease, filter .5s ease; }
+.about-photo-wrap:hover img { transform: scale(1.04); filter: brightness(0.55) saturate(1.2); }
+.photo-hover-overlay { position: absolute; inset: 0; border-radius: 14px; opacity: 0; pointer-events: none; transition: opacity .4s ease; z-index: 5; overflow: hidden; }
+.about-photo-wrap:hover .photo-hover-overlay { opacity: 1; }
+.photo-hover-overlay::before { content: ''; position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); box-shadow: 0 0 12px var(--cyan); animation: scanLine 2s linear infinite; z-index: 6; }
+@keyframes scanLine { 0% { top: -2px; opacity: 0; } 5% { opacity: 1; } 95% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+.photo-hover-overlay::after { content: ''; position: absolute; inset: 12px; border: 1.5px solid transparent; border-radius: 8px; background: linear-gradient(var(--bg),var(--bg)) padding-box, linear-gradient(135deg, var(--cyan), transparent 40%, transparent 60%, var(--indigo)) border-box; animation: borderPulse 2.5s ease-in-out infinite; }
+@keyframes borderPulse { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+.overlay-info { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(8,12,20,0.95) 0%, rgba(8,12,20,0.7) 70%, transparent 100%); padding: 2.5rem 1.4rem 1.4rem; z-index: 8; transform: translateY(8px); transition: transform .4s ease; }
+.about-photo-wrap:hover .overlay-info { transform: translateY(0); }
+.overlay-label { font-family: 'Orbitron', sans-serif; font-size: .65rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--cyan); display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem; }
+.overlay-title { font-family: 'Orbitron', sans-serif; font-size: clamp(.9rem, 2vw, 1.1rem); font-weight: 800; color: var(--white); letter-spacing: .04em; margin-bottom: .35rem; }
+.overlay-sub { font-size: .75rem; color: var(--muted); line-height: 1.5; }
+.about-photo-wrap { transition: box-shadow .4s ease, border-color .4s ease; }
+.about-photo-wrap:hover { box-shadow: 0 0 0 1px var(--cyan), 0 0 30px rgba(183,0,255,0.2); border-color: rgba(183,0,255,0.5) !important; }
+.about-copy p { color:var(--muted); font-size:.95rem; line-height:1.8; margin-bottom:1rem; }
+.about-copy p strong { color:var(--white); }
+.mini-stats { display:flex; gap:1rem; flex-wrap:wrap; margin-top:1.8rem; }
+.mini-stat { background: rgba(14,20,33,0.9); border: 1px solid var(--border); border-radius: 10px; padding: .9rem 1.2rem; text-align: center; min-width: 80px; transition: border-color .2s; }
+.mini-stat:hover { border-color: var(--cyan); }
+.mini-stat-num { font-family: 'Orbitron', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--cyan); display: block; line-height: 1; margin-bottom: .3rem; }
+.mini-stat-label { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+.badge-strip { display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1.5rem; }
+.badge { font-size:.72rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:.3rem .8rem; border-radius:3px; background:rgba(124,58,237,0.12); border:1px solid rgba(124,58,237,0.3); color:#A78BFA; }
+.badge.cyan { background:rgba(183,0,255,0.08); border-color:rgba(183,0,255,0.3); color:var(--cyan); }
+.starfield { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+
+
+/* ═══════════════════════════════════════════════
+   MARS GARAGE — TRUE SPLIT CARD / REFERENCE STYLE
+   Left 55% = garage/rover image
+   Right 45% = dark HUD information panel
+   ═══════════════════════════════════════════════ */
+#projects{
+  position:relative;
+  padding:1.25rem 2.5% 1.35rem;
+  overflow:hidden;
+  background:#020207;
+}
+
+#projects::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 35% 45%,rgba(124,58,237,.12),transparent 42%),
+    radial-gradient(circle at 85% 80%,rgba(183,0,255,.07),transparent 42%),
+    linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.72));
+  z-index:0;
+}
+
+.projects-header{
+  text-align:center;
+  padding:0 0 .4rem;
+  position:relative;
+  z-index:4;
+}
+
+.projects-header h2{
+  margin-top:.35rem;
+  font-size:clamp(1.65rem,3vw,2.7rem);
+  letter-spacing:.06em;
+}
+
+.projects-header h2 span{
+  color:#a855f7;
+  text-shadow:0 0 25px rgba(168,85,247,.35);
+}
+
+.projects-header .proj-title-line{
+  display:block;
+  width:70px;
+  height:2px;
+  background:linear-gradient(90deg,var(--indigo),var(--cyan));
+  margin:.55rem auto .7rem;
+  border-radius:2px;
+}
+
+.projects-header p{
+  color:var(--muted);
+  font-size:.58rem;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+}
+
+/* ── MAIN SPLIT CARD ── */
+.garage-stage{
+  position:relative;
+  z-index:3;
+  width:100%;
+  max-width:1320px;
+  width:min(100%,1320px);
+  height:min(76vh,650px);
+  min-height:450px;
+  aspect-ratio:auto;
+  margin:0 auto;
+  overflow:hidden;
+  display:grid;
+  grid-template-columns:55% 45%;
+  background:#03030a;
+  border:1px solid rgba(168,85,247,.55);
+  border-radius:10px;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.025),
+    0 0 45px rgba(90,30,255,.16),
+    inset 0 0 80px rgba(0,0,0,.5);
+}
+
+/* Left image panel — JavaScript changes this background for each rover. */
+.garage-rover-zone{
+  position:relative;
+  grid-column:1;
+  grid-row:1;
+  min-width:0;
+  min-height:0;
+  overflow:hidden;
+  z-index:1;
+  background:#050509 center center / 135% auto no-repeat;
+  border-right:1px solid rgba(168,85,247,.25);
+  isolation:isolate;
+}
+
+.garage-rover-zone::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.04) 0%,rgba(0,0,0,.08) 55%,rgba(2,2,8,.38) 100%),
+    linear-gradient(180deg,rgba(0,0,0,.12),transparent 25%,transparent 72%,rgba(0,0,0,.48));
+}
+
+.garage-rover-zone::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  background:radial-gradient(ellipse at 55% 70%,transparent 25%,rgba(0,0,0,.22) 75%,rgba(0,0,0,.42) 100%);
+}
+
+.garage-rover-zone .garage-rover{display:none !important;}
+.garage-ring,.garage-floor-light,.garage-scan{display:none;}
+
+/* Right information panel */
+.garage-panel{
+  position:relative;
+  grid-column:2;
+  grid-row:1;
+  min-width:0;
+  min-height:0;
+  z-index:5;
+  padding:1.4rem 1.55rem 3rem;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  background:
+    linear-gradient(180deg,rgba(5,5,14,.98),rgba(3,3,10,.99)),
+    radial-gradient(circle at 15% 10%,rgba(168,85,247,.08),transparent 40%);
+  border-left:1px solid rgba(168,85,247,.18);
+}
+
+.garage-panel::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(168,85,247,.05),transparent 18%),
+    linear-gradient(180deg,rgba(255,255,255,.025),transparent 16%,transparent 84%,rgba(168,85,247,.035));
+}
+
+.garage-title-row{
+  position:relative;
+  display:flex;
+  align-items:baseline;
+  gap:.75rem;
+  margin-bottom:.35rem;
+  z-index:1;
+}
+
+.garage-rover-name{
+  position:static;
+  display:block;
+  padding:0;
+  min-height:0;
+  border:0;
+  border-radius:0;
+  background:none;
+  color:#f5f5f8;
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.15rem,2.05vw,1.7rem);
+  font-weight:800;
+  line-height:1.1;
+  letter-spacing:.045em;
+  text-transform:uppercase;
+  box-shadow:none;
+  backdrop-filter:none;
+  text-shadow:0 0 18px rgba(255,255,255,.10);
+  transition:opacity .2s ease,transform .2s ease;
+}
+
+.garage-rover-name-dot{display:none;}
+
+.garage-rover-name small{
+  color:#b66cff;
+  font-size:.46em;
+  font-weight:600;
+  letter-spacing:.08em;
+  margin-left:.25rem;
+  vertical-align:middle;
+}
+
+.garage-stage.rover-changing .garage-rover-name{
+  opacity:.35;
+  transform:translateY(-3px);
+}
+
+.garage-subtitle{
+  position:relative;
+  z-index:1;
+  color:#d7d8df;
+  font-size:clamp(.53rem,.75vw,.7rem);
+  line-height:1.35;
+  letter-spacing:.075em;
+  text-transform:uppercase;
+  max-width:340px;
+  margin:0 0 .85rem;
+}
+
+.garage-accent-line{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:1px;
+  margin:-.55rem 0 1rem;
+  background:linear-gradient(90deg,#a855f7 0 18%,rgba(168,85,247,.28) 48%,transparent 100%);
+}
+
+.garage-section-heading{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  gap:.45rem;
+  color:#f0e8ff;
+  font-family:'Orbitron',sans-serif;
+  font-size:.58rem;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin:0 0 .48rem;
+}
+
+.garage-section-heading::before{
+  content:'↗';
+  color:#c026ff;
+  font-size:.75rem;
+  text-shadow:0 0 8px rgba(192,38,255,.65);
+}
+
+.garage-section-heading::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,rgba(168,85,247,.65),rgba(168,85,247,.15));
+}
+
+.garage-features-wrap,.garage-specs-wrap{
+  position:relative;
+  z-index:1;
+}
+
+/* Feature cards */
+.garage-info-list{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+.garage-info-list.features-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:0;
+  border-top:1px solid rgba(255,255,255,.09);
+  border-left:1px solid rgba(255,255,255,.05);
+  border-radius:6px;
+  overflow:hidden;
+}
+
+.garage-info-list.features-list li{
+  min-width:0;
+  min-height:44px;
+  padding:.42rem .48rem;
+  display:flex;
+  align-items:center;
+  gap:.55rem;
+  border-right:1px solid rgba(255,255,255,.08);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:rgba(8,8,17,.45);
+  transition:background .2s,border-color .2s,transform .2s;
+}
+
+.garage-info-list.features-list li:hover{
+  background:rgba(124,58,237,.10);
+  border-color:rgba(192,38,255,.35);
+}
+
+.feature-icon{
+  width:21px;
+  height:21px;
+  flex:0 0 21px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(192,38,255,.75);
+  border-radius:50%;
+  color:#c026ff;
+  font-size:.78rem;
+  line-height:1;
+  box-shadow:0 0 10px rgba(192,38,255,.12);
+}
+
+.feature-text{
+  min-width:0;
+  color:#c0c4cd;
+  font-size:clamp(.46rem,.64vw,.6rem);
+  line-height:1.3;
+}
+
+.feature-text strong{
+  display:block;
+  color:#f2f3f6;
+  font-size:1em;
+  font-weight:600;
+}
+
+/* Specs */
+.garage-specs-wrap{
+  margin-top:.7rem;
+}
+
+.garage-info-list.specs-list{
+  border-top:1px solid rgba(255,255,255,.10);
+}
+
+.garage-info-list.specs-list li{
+  display:grid;
+  grid-template-columns:34% 66%;
+  min-height:26px;
+  align-items:center;
+  border-bottom:1px solid rgba(255,255,255,.09);
+  color:#c3c7d0;
+  font-size:clamp(.47rem,.67vw,.61rem);
+}
+
+.garage-info-list.specs-list li strong{
+  color:#f0f1f5;
+  font-weight:500;
+  padding:.3rem .35rem .3rem 0;
+}
+
+.garage-info-list.specs-list li span{
+  color:#b9bdc8;
+  padding:.3rem 0 .3rem .7rem;
+  border-left:1px solid rgba(255,255,255,.06);
+}
+
+/* Bay label */
+.garage-bay-code{
+  position:absolute;
+  z-index:10;
+  top:18px;
+  right:18px;
+  color:#a855f7;
+  font-family:'Orbitron',sans-serif;
+  font-size:.62rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-shadow:0 0 18px rgba(168,85,247,.55);
+  opacity:.9;
+}
+
+.garage-bay-code::before{
+  content:'';
+  display:inline-block;
+  width:23px;
+  height:2px;
+  margin:0 .4rem .15rem 0;
+  background:repeating-linear-gradient(90deg,#a855f7 0 4px,transparent 4px 7px);
+  opacity:.85;
+}
+
+/* Bottom controls — placed on the right panel like the reference. */
+.garage-arrow{
+  position:absolute;
+  z-index:11;
+  bottom:10px;
+  top:auto;
+  transform:none;
+  width:29px;
+  height:29px;
+  border:1px solid rgba(168,85,247,.48);
+  border-radius:5px;
+  background:rgba(5,4,14,.78);
+  color:#e9ddff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Orbitron',sans-serif;
+  font-size:.95rem;
+  line-height:1;
+  cursor:pointer;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  box-shadow:0 0 14px rgba(168,85,247,.12);
+  transition:all .25s ease;
+}
+
+.garage-arrow:hover{
+  border-color:#c026ff;
+  color:#fff;
+  background:rgba(124,58,237,.20);
+  box-shadow:0 0 20px rgba(192,38,255,.35);
+}
+
+.garage-prev{right:225px;}
+.garage-next{right:187px;}
+
+.garage-rover-counter{
+  position:absolute;
+  z-index:10;
+  right:262px;
+  left:auto;
+  bottom:11px;
+  transform:none;
+  min-width:58px;
+  text-align:center;
+  color:#c58cff;
+  font-family:'Orbitron',sans-serif;
+  font-size:.43rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+
+/* Final desktop page-fit sizing: slightly larger card, still contained within one viewport. */
+@media (min-width:1051px){
+  #projects{padding-top:1.15rem;padding-bottom:1.25rem;}
+  .garage-stage{
+    width:min(96vw,1360px);
+    height:min(76vh,650px);
+    min-height:450px;
+  }
+  .projects-header h2{font-size:clamp(1.7rem,3vw,2.7rem);}
+}
+
+/* Responsive */
+@media (max-width:1050px){
+  .garage-panel{padding:1.65rem 1.4rem 3.3rem;}
+  .garage-rover-name{font-size:clamp(1.15rem,2.6vw,1.7rem);}
+  .garage-subtitle{margin-bottom:1rem;}
+  .garage-info-list.features-list li{min-height:47px;padding:.5rem;}
+  .feature-icon{width:22px;height:22px;flex-basis:22px;font-size:.68rem;}
+  .garage-specs-wrap{margin-top:.8rem;}
+  .garage-info-list.specs-list li{min-height:27px;}
+  .garage-prev{right:128px;}
+  .garage-next{right:91px;}
+  .garage-rover-counter{right:165px;}
+}
+
+@media (max-width:800px){
+  #projects{padding-left:1rem;padding-right:1rem;}
+  .garage-stage{height:min(68vh,500px);min-height:390px;}
+  .garage-panel{padding:1.1rem .9rem 3rem;}
+  .garage-rover-name{font-size:clamp(.95rem,2.8vw,1.35rem);}
+  .garage-subtitle{font-size:.44rem;margin-bottom:.75rem;}
+  .garage-accent-line{margin:-.3rem 0 .65rem;}
+  .garage-section-heading{font-size:.48rem;margin-bottom:.42rem;}
+  .garage-info-list.features-list li{min-height:39px;padding:.35rem .32rem;gap:.3rem;}
+  .feature-icon{width:18px;height:18px;flex-basis:18px;font-size:.5rem;}
+  .feature-text{font-size:.38rem;}
+  .garage-specs-wrap{margin-top:.55rem;}
+  .garage-info-list.specs-list li{font-size:.39rem;min-height:22px;}
+  .garage-info-list.specs-list li strong{padding:.25rem .2rem .25rem 0;}
+  .garage-info-list.specs-list li span{padding:.25rem 0 .25rem .35rem;}
+  .garage-bay-code{top:10px;right:10px;font-size:.46rem;}
+  .garage-arrow{width:25px;height:25px;bottom:9px;font-size:.75rem;}
+  .garage-prev{right:78px;}
+  .garage-next{right:46px;}
+  .garage-rover-counter{right:111px;bottom:11px;font-size:.35rem;}
+}
+
+@media (max-width:560px){
+  .garage-stage{
+    aspect-ratio:4 / 5;
+    min-height:620px;
+    display:block;
+  }
+  .garage-rover-zone{
+    position:absolute;
+    inset:0 0 auto 0;
+    width:100%;
+    height:46%;
+    border-right:0;
+    border-bottom:1px solid rgba(168,85,247,.22);
+  }
+  .garage-panel{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    top:auto;
+    width:100%;
+    height:58%;
+    padding:1rem 1rem 3rem;
+    border-left:0;
+    border-top:1px solid rgba(168,85,247,.18);
+  }
+  .garage-bay-code{display:none;}
+  .garage-rover-name{font-size:1.15rem;}
+  .garage-subtitle{font-size:.46rem;}
+  .garage-info-list.features-list li{min-height:41px;}
+  .feature-icon{width:19px;height:19px;flex-basis:19px;font-size:.54rem;}
+  .feature-text{font-size:.4rem;}
+  .garage-info-list.specs-list li{font-size:.41rem;min-height:24px;}
+  .garage-prev{right:62px;}
+  .garage-next{right:18px;}
+  .garage-rover-counter{right:98px;bottom:10px;}
+}
+
+/* Keep archive-only garage styles harmless */
+.garage-data-item,
+.garage-bottom,
+.garage-footnote,
+.garage-project-count{display:none;}
+
+/* ── COMPETITIONS ── */
+#competitions { background: #000; padding: 6rem 5% 5rem; position: relative; overflow: hidden; }
+#competitions::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 0% 50%, rgba(124,58,237,0.1) 0%, transparent 50%), radial-gradient(ellipse at 100% 20%, rgba(0,229,255,0.07) 0%, transparent 45%), radial-gradient(ellipse at 50% 100%, rgba(183,0,255,0.06) 0%, transparent 55%); pointer-events: none; }
+#comp-stars { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.comp-header { text-align: center; position: relative; z-index: 2; margin-bottom: 4rem; }
+.comp-header h2 { font-family: 'Orbitron', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; color: var(--white); margin-bottom: .4rem; }
+.comp-header .comp-line { display: block; width: 80px; height: 3px; background: linear-gradient(90deg, var(--indigo), var(--cyan)); margin: .5rem auto .8rem; border-radius: 2px; }
+.comp-header p { color: var(--muted); font-size: .9rem; }
+.comp-arena { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; position: relative; z-index: 2; margin: 0 auto 5rem; max-width: 1120px; align-items: stretch; }
+.comp-card { min-width: 0; background: rgba(14,20,33,0.75); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; position: relative; transition: transform .35s ease, border-color .35s ease, box-shadow .35s ease; backdrop-filter: blur(8px); display: flex; flex-direction: column; }
+.comp-card:hover { transform: translateY(-8px); border-color: rgba(183,0,255,0.5); box-shadow: 0 0 0 1px rgba(183,0,255,0.15), 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(183,0,255,0.12); }
+.comp-card-erc { --card-accent: #7C3AED; }
+.comp-card-irc { --card-accent: #b700ff; }
+.comp-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--card-accent), transparent); opacity: .8; }
+.comp-visual { width: 100%; aspect-ratio: 16/8; background: var(--card); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+.comp-visual-bg { position: absolute; inset: 0; opacity: .18; background-size: 60px 60px; background-image: radial-gradient(circle, var(--card-accent) 1px, transparent 1px); }
+.comp-visual-globe { position: relative; z-index: 2; font-size: 4.5rem; filter: drop-shadow(0 0 24px var(--card-accent)); animation: floatGlobe 4s ease-in-out infinite; }
+@keyframes floatGlobe { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.comp-visual::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(8,12,20,.9) 100%); }
+.comp-card:hover .comp-visual::before { content: ''; position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--card-accent), transparent); box-shadow: 0 0 10px var(--card-accent); animation: compScan 1.8s linear infinite; z-index: 5; }
+@keyframes compScan { 0% { top: -2px; opacity: 0; } 5% { opacity: 1; } 95% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+.comp-role-pill { position: absolute; top: 12px; right: 12px; font-family: 'Orbitron', sans-serif; font-size: .6rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; padding: .25rem .75rem; border-radius: 20px; z-index: 6; backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.6); }
+.role-competitor { color: #A78BFA; border-color: rgba(124,58,237,0.5); }
+.role-organizer { color: #00e5ff; border-color: rgba(0,229,255,0.5); background: rgba(0,229,255,0.08); }
+.comp-abbrev { position: absolute; top: 12px; left: 12px; font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 900; letter-spacing: .08em; color: var(--white); opacity: .7; z-index: 6; text-shadow: 0 0 20px var(--card-accent); }
+.comp-body { padding: 1.4rem 1.5rem 1.6rem; display: flex; flex-direction: column; gap: .7rem; flex: 1; }
+.comp-name { font-family: 'Orbitron', sans-serif; font-size: .88rem; font-weight: 800; color: var(--white); letter-spacing: .04em; line-height: 1.3; }
+.comp-fullname { font-size: .72rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-top: -.3rem; }
+.comp-desc { font-size: .83rem; color: var(--muted); line-height: 1.65; }
+.comp-results { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .3rem; }
+.comp-result-tag { font-size: .62rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .2rem .65rem; border-radius: 3px; display: flex; align-items: center; gap: .3rem; }
+.result-gold { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.35); color: #FFD700; }
+.result-silver { background: rgba(192,192,192,0.1); border: 1px solid rgba(192,192,192,0.3); color: #C0C0C0; }
+.result-qual { background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.35); color: #A78BFA; }
+.result-host { background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.3); color: var(--cyan); }
+.result-new { background: rgba(183,0,255,0.1); border: 1px solid rgba(183,0,255,0.35); color: #d966ff; }
+.comp-link { display: inline-flex; align-items: center; gap: .4rem; font-size: .75rem; font-weight: 600; letter-spacing: .08em; color: var(--muted); text-decoration: none; text-transform: uppercase; margin-top: auto; transition: color .2s; cursor: none; }
+.comp-link:hover { color: var(--cyan); }
+.comp-link svg { transition: transform .2s; }
+.comp-link:hover svg { transform: translateX(3px); }
+.comp-timeline-wrap { position: relative; z-index: 2; }
+.comp-timeline-label { text-align: center; font-family: 'Orbitron', sans-serif; font-size: .65rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--indigo); margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1rem; }
+.comp-timeline-label::before, .comp-timeline-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border)); }
+.comp-timeline-label::after { background: linear-gradient(90deg, var(--border), transparent); }
+.comp-timeline { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; align-items: start; padding: 0 1%; }
+.comp-timeline::before { content: ''; position: absolute; top: 7px; left: 12.5%; right: 12.5%; height: 2px; background: linear-gradient(90deg, var(--indigo), var(--cyan) 50%, var(--indigo)); z-index: 0; }
+.comp-timeline::after { content: ''; position: absolute; top: 0; left: 12.5%; right: 12.5%; height: 16px; pointer-events: none; }
+.comp-timeline > .comp-tl-item { min-width: 0; }
+
+.comp-tl-item { display: flex; flex-direction: column; align-items: center; gap: .7rem; position: relative; z-index: 1; text-align: center; padding: 0 .45rem; }
+.comp-tl-item .comp-result-tag { margin-top: .15rem; white-space: nowrap; }
+
+.comp-tl-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--cyan); background: var(--bg); position: relative; flex-shrink: 0; transition: transform .25s, box-shadow .25s; }
+.comp-tl-dot::before { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--cyan); opacity: .7; }
+.comp-tl-item:hover .comp-tl-dot { transform: scale(1.4); box-shadow: 0 0 12px var(--cyan), 0 0 24px rgba(183,0,255,0.4); }
+.comp-tl-year { font-family: 'Orbitron', sans-serif; font-size: .72rem; font-weight: 700; color: var(--cyan); letter-spacing: .1em; }
+.comp-tl-event { font-size: .73rem; color: var(--white); text-align: center; line-height: 1.4; max-width: 150px; min-height: 2.05em; font-weight: 500; }
+.comp-tl-where { font-size: .65rem; color: var(--muted); text-align: center; display: flex; align-items: center; justify-content: center; gap: .25rem; min-height: 1.6em; }
+.comp-globe-deco { position: absolute; right: 3%; top: 50%; transform: translateY(-50%); opacity: .04; pointer-events: none; z-index: 0; }
+
+/* ─── ACHIEVEMENTS ─── */
+#achievements { background: #000; padding: 5rem 0 4rem; position: relative; overflow: hidden; }
+#achievements::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 10% 40%, rgba(124,58,237,0.09) 0%, transparent 55%), radial-gradient(ellipse at 90% 60%, rgba(0,229,255,0.06) 0%, transparent 50%); z-index: 0; }
+.ach-stars { position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+.ach-header { text-align: center; position: relative; z-index: 2; margin-bottom: 3rem; padding: 0 5%; }
+.ach-header h2 { font-family: 'Orbitron', sans-serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; color: var(--white); margin-bottom: .4rem; }
+.ach-header .ach-line { display: block; width: 80px; height: 3px; background: linear-gradient(90deg, var(--indigo), var(--cyan)); margin: .5rem auto .8rem; border-radius: 2px; }
+.ach-header p { color: var(--muted); font-size: .9rem; }
+.ach-track-wrap { position: relative; z-index: 2; overflow: hidden; padding: 0 80px; }
+.ach-track { display: flex; gap: 1.8rem; transition: transform .5s cubic-bezier(.4,0,.2,1); will-change: transform; }
+.ach-card { flex: 0 0 calc(50% - .9rem); background: rgba(14,20,33,0.7); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; position: relative; transition: border-color .3s, box-shadow .3s, transform .3s; cursor: default; backdrop-filter: blur(6px); }
+.ach-card:hover { border-color: var(--cyan); box-shadow: 0 0 0 1px rgba(183,0,255,.2), 0 8px 40px rgba(183,0,255,.12), 0 0 60px rgba(124,58,237,.1); transform: translateY(-4px); }
+.ach-rank { position: absolute; top: 12px; left: 12px; font-family: 'Orbitron', sans-serif; font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; background: rgba(0,0,0,.65); border: 1px solid rgba(183,0,255,.35); color: var(--cyan); padding: .25rem .65rem; border-radius: 20px; z-index: 3; backdrop-filter: blur(4px); }
+.ach-visual { width: 100%; aspect-ratio: 16/9; background: var(--card); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.ach-visual-emoji { font-size: 4.5rem; filter: drop-shadow(0 0 20px rgba(183,0,255,.4)); }
+.ach-visual::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(8,12,20,.7) 100%); }
+.ach-card:hover .ach-visual::before { content: ''; position: absolute; left:0; right:0; height:2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); box-shadow: 0 0 10px var(--cyan); animation: achScan 1.8s linear infinite; z-index: 4; }
+@keyframes achScan { 0% { top: -2px; opacity:0; } 5% { opacity:1; } 95% { opacity:1; } 100% { top:100%; opacity:0; } }
+.ach-caption { padding: 1.1rem 1.3rem 1.4rem; }
+.ach-caption p { font-size: .85rem; color: var(--white); font-weight: 500; line-height: 1.5; text-align: center; }
+.ach-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(14,20,33,.85); border: 1px solid var(--border); border-radius: 50%; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--white); z-index: 5; transition: border-color .2s, background .2s, color .2s; backdrop-filter: blur(6px); }
+.ach-arrow:hover { border-color: var(--cyan); background: rgba(183,0,255,.08); color: var(--cyan); }
+.ach-prev { left: 14px; }
+.ach-next { right: 14px; }
+.ach-dots { display: flex; justify-content: center; gap: .5rem; margin-top: 2rem; position: relative; z-index: 2; }
+.ach-dot { width: 28px; height: 4px; border-radius: 2px; background: var(--border); cursor: pointer; transition: background .25s, width .25s; }
+.ach-dot.active { background: var(--cyan); width: 44px; }
+
+/* ─── DEPARTMENTS — CONNECTED TECHNICAL SYSTEM / FIVE DEPARTMENTS ─── */
+.gg-wrap {
+  --dept-cyan:#00e5ff;
+  --dept-purple:#7C3AED;
+  background:#02070c;
+  padding:5.5rem 4% 4.5rem;
+  font-family:'Inter',sans-serif;
+  position:relative;
+  overflow:hidden;
+  min-height:700px;
+}
+.gg-wrap::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(0,229,255,.08),transparent 30%),
+    radial-gradient(ellipse at 12% 30%,rgba(124,58,237,.08),transparent 42%),
+    radial-gradient(ellipse at 88% 65%,rgba(183,0,255,.05),transparent 40%);
+  pointer-events:none;
+}
+.gg-wrap::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  opacity:.22;
+  background-image:
+    linear-gradient(rgba(0,229,255,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,229,255,.035) 1px,transparent 1px);
+  background-size:42px 42px;
+  pointer-events:none;
+}
+.gg-head {
+  text-align:center;
+  position:relative;
+  z-index:4;
+  margin-bottom:2.8rem;
+}
+.gg-kicker {
+  font-family:'Orbitron',sans-serif;
+  font-size:.58rem;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--dept-cyan);
+  margin-bottom:.55rem;
+  display:block;
+}
+.gg-title {
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1.8rem,4vw,2.65rem);
+  font-weight:900;
+  letter-spacing:.06em;
+  color:var(--white);
+}
+.gg-line {
+  width:70px;
+  height:2px;
+  background:linear-gradient(90deg,var(--dept-purple),var(--dept-cyan));
+  margin:.65rem auto 0;
+  border-radius:2px;
+  display:block;
+  box-shadow:0 0 12px rgba(0,229,255,.35);
+}
+.gg-system {
+  width:min(1180px,100%);
+  height:500px;
+  margin:0 auto;
+  position:relative;
+  z-index:3;
+}
+.gg-connections {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:1;
+  pointer-events:none;
+}
+.gg-connection {
+  fill:none;
+  stroke:rgba(0,229,255,.48);
+  stroke-width:1.2;
+  stroke-linecap:round;
+  filter:drop-shadow(0 0 4px rgba(0,229,255,.3));
+}
+.gg-connection-secondary {
+  fill:none;
+  stroke:rgba(124,58,237,.35);
+  stroke-width:1;
+  stroke-dasharray:4 7;
+}
+.gg-node {
+  fill:#06141c;
+  stroke:#00e5ff;
+  stroke-width:1.2;
+  filter:drop-shadow(0 0 5px rgba(0,229,255,.45));
+}
+.gg-center-ring {
+  fill:none;
+  stroke:rgba(0,229,255,.25);
+  stroke-width:1;
+  stroke-dasharray:3 7;
+  animation:ggRotate 18s linear infinite;
+  transform-origin:50% 50%;
+}
+@keyframes ggRotate { to { transform:rotate(360deg); } }
+
+.gg-core {
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:160px;
+  height:160px;
+  transform:translate(-50%,-50%);
+  border:1px solid rgba(0,229,255,.7);
+  border-radius:50%;
+  background:radial-gradient(circle,#09202b 0%,#031018 55%,#02070c 100%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  z-index:4;
+  box-shadow:0 0 0 8px rgba(0,229,255,.025),0 0 35px rgba(0,229,255,.16),inset 0 0 30px rgba(0,229,255,.07);
+}
+.gg-core::before,
+.gg-core::after {
+  content:'';
+  position:absolute;
+  border-radius:50%;
+  pointer-events:none;
+}
+.gg-core::before { inset:-10px; border:1px solid rgba(0,229,255,.22); }
+.gg-core::after { inset:-22px; border:1px dashed rgba(124,58,237,.18); }
+.gg-core-icon {
+  width:28px;
+  height:28px;
+  margin-bottom:.35rem;
+  color:var(--dept-cyan);
+  filter:drop-shadow(0 0 7px rgba(0,229,255,.65));
+  stroke:currentColor;
+  fill:none;
+  stroke-width:1.4;
+}
+.gg-core-name {
+  font-family:'Orbitron',sans-serif;
+  font-size:1rem;
+  font-weight:900;
+  letter-spacing:.16em;
+  color:var(--white);
+}
+.gg-core-sub {
+  font-family:'Orbitron',sans-serif;
+  margin-top:.25rem;
+  font-size:.42rem;
+  letter-spacing:.15em;
+  color:var(--dept-cyan);
+  text-transform:uppercase;
+}
+
+.gg-card {
+  --c:#00e5ff;
+  position:absolute;
+  width:190px;
+  min-height:82px;
+  padding:1rem 1.1rem;
+  border:1px solid color-mix(in srgb,var(--c) 48%,#17303c);
+  background:rgba(3,13,20,.9);
+  /* Do not clip the card itself: the hover panel extends outside it. */
+  overflow:visible;
+  border-radius:2px;
+  cursor:pointer;
+  z-index:4;
+  transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease,background .3s ease;
+}
+.gg-card::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  border:1px solid var(--c);
+  opacity:.16;
+  clip-path:polygon(10px 0,calc(100% - 10px) 0,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0 calc(100% - 10px),0 10px);
+  pointer-events:none;
+}
+.gg-card::after {
+  content:'';
+  position:absolute;
+  left:12px;
+  right:12px;
+  top:-2px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--c),transparent);
+  box-shadow:0 0 9px var(--c);
+  opacity:0;
+}
+.gg-card:hover {
+  transform:translateY(-5px) scale(1.025);
+  border-color:var(--c);
+  background:rgba(4,23,32,.96);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 18%,transparent),0 0 28px color-mix(in srgb,var(--c) 18%,transparent);
+}
+.gg-card:hover::after { animation:ggScan 1.7s linear infinite; opacity:1; }
+@keyframes ggScan { 0%{top:-2px;opacity:0} 8%{opacity:1} 92%{opacity:1} 100%{top:100%;opacity:0} }
+.gg-card .gg-corner {
+  position:absolute;
+  top:9px;
+  right:9px;
+  width:13px;
+  height:13px;
+  border-top:1px solid var(--c);
+  border-right:1px solid var(--c);
+  opacity:.55;
+}
+.gg-card:hover .gg-corner { opacity:1; }
+.gg-body { display:flex; align-items:center; gap:.75rem; }
+.gg-icon {
+  width:34px;
+  height:34px;
+  flex:0 0 34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--c);
+  transition:transform .3s ease;
+}
+.gg-icon svg { width:28px; height:28px; stroke:currentColor; fill:none; stroke-width:1.5; }
+.gg-card:hover .gg-icon { transform:scale(1.12); }
+.gg-copy { min-width:0; padding-right:.35rem; }
+.gg-name {
+  font-family:'Orbitron',sans-serif;
+  font-size:.68rem;
+  font-weight:800;
+  color:var(--white);
+  letter-spacing:.07em;
+  line-height:1.35;
+  text-transform:uppercase;
+}
+.gg-desc {
+  font-size:.55rem;
+  color:var(--muted);
+  line-height:1.35;
+  margin-top:.22rem;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.gg-num {
+  position:absolute;
+  right:9px;
+  bottom:7px;
+  font-family:'Orbitron',sans-serif;
+  font-size:.43rem;
+  color:var(--muted);
+  letter-spacing:.12em;
+  opacity:.45;
+}
+
+/* Key-focus panel shown when the cursor moves over a department */
+.gg-focus {
+  position:absolute;
+  top:calc(100% + 10px);
+  left:50%;
+  transform:translateX(-50%) translateY(-8px);
+  width:255px;
+  padding:.8rem .9rem .85rem;
+  background:rgba(2,10,16,.97);
+  border:1px solid var(--c);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 15%,transparent),0 10px 30px rgba(0,0,0,.45),0 0 24px color-mix(in srgb,var(--c) 14%,transparent);
+  backdrop-filter:blur(12px);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .22s ease,transform .22s ease,visibility .22s ease;
+  z-index:100;
+  clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px);
+}
+.gg-focus::before {
+  content:'';
+  position:absolute;
+  top:-5px;
+  left:50%;
+  width:9px;
+  height:9px;
+  background:rgba(2,10,16,.97);
+  border-left:1px solid var(--c);
+  border-top:1px solid var(--c);
+  transform:translateX(-50%) rotate(45deg);
+}
+.gg-focus-title {
+  font-family:'Orbitron',sans-serif;
+  font-size:.48rem;
+  letter-spacing:.18em;
+  color:var(--c);
+  text-transform:uppercase;
+  margin-bottom:.55rem;
+}
+.gg-focus-list {
+  display:flex;
+  flex-wrap:wrap;
+  gap:.35rem;
+}
+.gg-focus-list span {
+  font-size:.52rem;
+  letter-spacing:.05em;
+  color:#dce8ed;
+  border:1px solid rgba(255,255,255,.11);
+  background:rgba(255,255,255,.035);
+  padding:.3rem .45rem;
+  border-radius:3px;
+}
+.gg-card:hover .gg-focus,
+.gg-card:focus-within .gg-focus {
+  opacity:1;
+  visibility:visible;
+  transform:translateX(-50%) translateY(0);
+}
+/* Explicit hover fallback so the key-focus panel is always visible on desktop. */
+@media (min-width:701px) {
+  .gg-card:hover > .gg-focus {
+    opacity:1 !important;
+    visibility:visible !important;
+  }
+}
+
+/* Keep the hover panel away from the centre on side nodes */
+.gg-electrical .gg-focus,
+.gg-software .gg-focus {
+  left:0;
+  transform:translateY(-8px);
+}
+.gg-electrical:hover .gg-focus,
+.gg-software:hover .gg-focus {
+  transform:translateY(0);
+}
+.gg-electronics .gg-focus,
+.gg-aerospace .gg-focus {
+  left:auto;
+  right:0;
+  transform:translateY(-8px);
+}
+.gg-electronics:hover .gg-focus,
+.gg-aerospace:hover .gg-focus {
+  transform:translateY(0);
+}
+
+/* Five-node arrangement: Mechanical / Electrical / Electronics / Software / Aerospace */
+.gg-mechanical { left:50%; top:0; transform:translateX(-50%); }
+.gg-electrical { left:3%; top:24%; }
+.gg-electronics { right:3%; top:24%; }
+.gg-software { left:12%; bottom:4%; }
+.gg-aerospace { right:12%; bottom:4%; }
+.gg-mechanical:hover { transform:translateX(-50%) translateY(-5px) scale(1.025); }
+
+.gg-footer {
+  text-align:center;
+  margin-top:1rem;
+  font-size:.55rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--muted);
+  position:relative;
+  z-index:4;
+}
+.gg-footer span { color:var(--dept-cyan); }
+
+@media (max-width:900px) {
+  .gg-wrap { padding:4.5rem 1.2rem 3.5rem; }
+  .gg-system { height:560px; max-width:700px; }
+  .gg-card { width:175px; }
+  .gg-electrical { left:0; }
+  .gg-electronics { right:0; }
+  .gg-software { left:3%; }
+  .gg-aerospace { right:3%; }
+}
+@media (max-width:700px) {
+  .gg-wrap { padding:4rem 1rem 3rem; }
+  .gg-system { height:auto; display:grid; grid-template-columns:1fr; gap:.9rem; }
+  .gg-connections { display:none; }
+  .gg-core,
+  .gg-card,
+  .gg-mechanical,.gg-electrical,.gg-electronics,.gg-software,.gg-aerospace {
+    position:relative;
+    left:auto;right:auto;top:auto;bottom:auto;
+    transform:none;
+  }
+  .gg-core { grid-row:1; width:145px; height:145px; margin:0 auto 1rem; }
+  .gg-card { width:100%; min-height:76px; }
+  .gg-focus,
+  .gg-electrical .gg-focus,
+  .gg-software .gg-focus,
+  .gg-electronics .gg-focus,
+  .gg-aerospace .gg-focus {
+    position:relative;
+    top:auto; left:auto; right:auto;
+    width:100%;
+    margin-top:.75rem;
+    transform:none !important;
+  }
+  .gg-card:hover .gg-focus,
+  .gg-card:focus-within .gg-focus {
+    transform:none !important;
+  }
+  .gg-focus::before { display:none; }
+  .gg-mechanical { order:2; }
+  .gg-electrical { order:3; }
+  .gg-electronics { order:4; }
+  .gg-software { order:5; }
+  .gg-aerospace { order:6; }
+  .gg-mechanical:hover { transform:translateY(-4px) scale(1.01); }
+}
+
+/* ─── TEAM ─── */
+#team { background: var(--surface); padding: 5rem 5%; position: relative; overflow: hidden; }
+#team::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 10%, rgba(124,58,237,0.06) 0%, transparent 50%), radial-gradient(ellipse at 80% 90%, rgba(0,229,255,0.04) 0%, transparent 50%); pointer-events: none; }
+.org-chart { display: flex; flex-direction: column; align-items: center; gap: 0; position: relative; z-index: 1; }
+.org-row { display: flex; justify-content: center; gap: 2rem; align-items: flex-start; }
+.org-row-leads { gap: 3rem; }
+.org-connector-v { width: 2px; height: 32px; background: linear-gradient(to bottom, var(--indigo), var(--cyan)); border-radius: 2px; flex-shrink: 0; }
+.org-node { display: flex; flex-direction: column; align-items: center; gap: .4rem; }
+.org-avatar { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: .95rem; font-weight: 700; color: var(--white); border: 2px solid var(--border); transition: border-color .2s, box-shadow .2s; }
+.org-node:hover .org-avatar { border-color: var(--cyan); box-shadow: 0 0 16px rgba(183,0,255,0.3); }
+.org-avatar-advisor { background: linear-gradient(135deg, #1a3a1a, #2d6a2d); border-color: #4a9a4a; width: 72px; height: 72px; font-size: 1rem; }
+.org-avatar-captain { background: linear-gradient(135deg, var(--indigo), #9F67FF); border-color: var(--indigo); width: 64px; height: 64px; }
+.org-avatar-lead { background: linear-gradient(135deg, #0d2540, #1a4a6e); border-color: #2a6a9e; }
+.org-label-top { font-size: .62rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--cyan); text-align: center; }
+.org-name { font-size: .82rem; font-weight: 600; color: var(--white); text-align: center; max-width: 120px; line-height: 1.3; }
+.org-depts { display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap; width: 100%; position: relative; }
+.org-depts::before { content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 2px; background: linear-gradient(90deg, transparent, var(--indigo) 20%, var(--cyan) 50%, var(--indigo) 80%, transparent); border-radius: 2px; }
+.org-depts-lower { margin-top: 2rem; }
+.org-depts-lower::before { display: none; }
+.org-dept-col { background: rgba(14,20,33,0.8); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; flex: 1 1 160px; min-width: 148px; max-width: 200px; transition: border-color .25s, box-shadow .25s, transform .25s; position: relative; margin-top: 28px; }
+.org-dept-col:hover { border-color: rgba(183,0,255,0.5); box-shadow: 0 0 20px rgba(183,0,255,0.1), 0 4px 24px rgba(0,0,0,0.4); transform: translateY(-3px); }
+.org-dept-col::before { content: ''; position: absolute; top: -28px; left: 50%; transform: translateX(-50%); width: 2px; height: 28px; background: linear-gradient(to bottom, var(--cyan), rgba(183,0,255,0.3)); }
+.org-dept-col-wide { flex: 1 1 220px; max-width: 260px; }
+.org-dept-header { background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(183,0,255,0.12)); border-bottom: 1px solid var(--border); padding: .6rem .9rem; font-family: 'Orbitron', sans-serif; font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--cyan); text-align: center; }
+.org-dept-members { padding: .7rem .8rem; display: flex; flex-direction: column; gap: .45rem; }
+.org-dept-members-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .45rem .6rem; }
+.org-dept-member { font-size: .76rem; color: var(--white); line-height: 1.3; display: flex; flex-direction: column; gap: .1rem; }
+.org-dept-role { font-size: .62rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; display: block; }
+.org-dept-col::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0; transition: opacity .3s; }
+.org-dept-col:hover::after { opacity: 1; }
+a.org-li-link { color: var(--white); text-decoration: none; position: relative; display: inline-flex; align-items: center; gap: .28rem; transition: color .2s; cursor: none; }
+a.org-li-link::after { content: ''; position: absolute; left: 0; bottom: -1px; width: 0; height: 1px; background: var(--cyan); transition: width .25s ease; }
+a.org-li-link:hover { color: var(--cyan); }
+a.org-li-link:hover::after { width: 100%; }
+a.org-li-link .li-icon { display: inline-flex; align-items: center; opacity: 0; transform: translateX(-3px); transition: opacity .2s, transform .2s; flex-shrink: 0; }
+a.org-li-link:hover .li-icon { opacity: 1; transform: translateX(0); }
+a.org-li-link .li-tip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%) translateY(4px); background: #0A66C2; color: #fff; font-size: .58rem; font-weight: 700; letter-spacing: .08em; padding: .18rem .5rem; border-radius: 3px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .18s, transform .18s; }
+a.org-li-link .li-tip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 4px solid transparent; border-top-color: #0A66C2; }
+a.org-li-link:hover .li-tip { opacity: 1; transform: translateX(-50%) translateY(0); }
+a.org-name-link { font-size: .82rem; font-weight: 600; color: var(--white); text-align: center; max-width: 120px; line-height: 1.3; text-decoration: none; display: inline-flex; flex-direction: column; align-items: center; gap: .15rem; transition: color .2s; cursor: none; position: relative; }
+a.org-name-link:hover { color: var(--cyan); }
+a.org-name-link .li-badge { font-size: .56rem; font-weight: 700; letter-spacing: .08em; color: #0A66C2; background: rgba(10,102,194,0.12); border: 1px solid rgba(10,102,194,0.35); border-radius: 3px; padding: .1rem .4rem; opacity: 0; transform: translateY(-2px); transition: opacity .2s, transform .2s; }
+a.org-name-link:hover .li-badge { opacity: 1; transform: translateY(0); }
+
+/* ─── CONTACT ─── */
+#contact { background:var(--bg); padding:5rem 5%; }
+.contact-wrap { display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:start; }
+.contact-info p { color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+.info-item { display:flex; gap:1rem; align-items:flex-start; margin-bottom:1.2rem; }
+.info-icon { width:36px; height:36px; flex-shrink:0; background:rgba(124,58,237,0.12); border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1rem; }
+.info-text { font-size:.88rem; }
+.info-text strong { display:block; color:var(--white); margin-bottom:.15rem; font-weight:600; }
+.info-text span { color:var(--muted); }
+.contact-form { display:flex; flex-direction:column; gap:1rem; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.form-field { display:flex; flex-direction:column; gap:.4rem; }
+label { font-size:.75rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+input, textarea { background:var(--card); border:1px solid var(--border); border-radius:4px; color:var(--white); padding:.7rem .9rem; font-size:.9rem; font-family:'Inter',sans-serif; outline:none; transition:border-color .2s,box-shadow .2s; width:100%; }
+input:focus, textarea:focus { border-color:var(--indigo); box-shadow:0 0 0 3px var(--glow); }
+textarea { resize:vertical; min-height:120px; }
+.form-submit { background:var(--indigo); color:var(--white); border:none; border-radius:4px; cursor:pointer; padding:.8rem 2rem; font-size:.9rem; font-weight:600; letter-spacing:.06em; font-family:'Inter',sans-serif; transition:background .2s,box-shadow .2s,transform .15s; align-self:flex-start; }
+.form-submit:hover { background:#9F67FF; box-shadow:0 0 20px var(--glow); transform:translateY(-2px); }
+
+/* ─── FOOTER ─── */
+footer { background:var(--surface); border-top:1px solid var(--border); padding:2rem 5%; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+.footer-logo { font-family:'Orbitron',sans-serif; font-size:.9rem; font-weight:700; letter-spacing:.15em; color:var(--white); }
+.footer-logo span { color:var(--cyan); }
+.footer-copy { font-size:.78rem; color:var(--muted); }
+.footer-links { display:flex; gap:1.5rem; }
+.footer-links a { font-size:.78rem; color:var(--muted); text-decoration:none; transition:color .2s; }
+.footer-links a:hover { color:var(--cyan); }
+
+/* ─── REVEAL ─── */
+.reveal { opacity:0; transform:translateY(28px); transition:opacity .6s ease,transform .6s ease; }
+.reveal.visible { opacity:1; transform:none; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width:900px) {
+  .hero-right { display: none; }
+  .hero-left { flex: 1; padding-right: 5%; }
+  .slide-specs,.slide-features { display:none; }
+  .slide-emoji-frame { width:200px; height:200px; font-size:5rem; }
+  .about-block { grid-template-columns:1fr; gap:2rem; direction:ltr; }
+  .about-block > * { order: unset !important; }
+  .org-dept-col { flex: 1 1 140px; min-width: 130px; }
+  .comp-arena { grid-template-columns: 1fr; gap: 1.2rem; }
+  .comp-timeline { grid-template-columns: 1fr; gap: 1.5rem; padding: 0; }
+  .comp-timeline::before { display: none; }
+  .comp-tl-item { flex-direction: row; align-items: flex-start; gap: 1rem; }
+  .gg-grid { grid-template-columns: 1fr 1fr; }
+  .gg-grid .gg-card:nth-child(4) { grid-column: 1/2; }
+  .gg-grid .gg-card:nth-child(5) { grid-column: 2/3; }
+}
+@media (max-width:820px) {
+  .ach-card { flex: 0 0 100%; }
+  .ach-track-wrap { padding: 0 56px; }
+  .org-row-leads { gap: 1.2rem; }
+  .org-name { max-width: 100px; font-size: .75rem; }
+}
+@media (max-width:700px) {
+  .nav-links { display:none; }
+  .hamburger { display:flex; }
+  .nav-links.open { display:flex; flex-direction:column; position:absolute; top:64px; left:0; right:0; background:rgba(8,12,20,0.97); padding:1.5rem 5%; border-bottom:1px solid var(--border); gap:1.2rem; }
+  #stats { grid-template-columns:repeat(2,1fr); }
+  .contact-wrap { grid-template-columns:1fr; }
+  .form-row { grid-template-columns:1fr; }
+  .org-dept-col { flex: 1 1 120px; min-width: 110px; }
+  .gg-grid { grid-template-columns: 1fr; }
+  .gg-grid .gg-card:nth-child(4), .gg-grid .gg-card:nth-child(5) { grid-column: auto; }
+  .hero-title-top, .hero-title-sub { font-size: 2.2rem; }
+}
+@media (max-width:480px) {
+  .slide-emoji-frame { width:160px; height:160px; font-size:4rem; }
+  .mini-stats { gap:.6rem; }
+  .mini-stat { min-width:64px; padding:.7rem .8rem; }
+  .org-avatar { width: 48px; height: 48px; font-size: .78rem; }
+  .org-avatar-advisor { width: 56px; height: 56px; }
+  .org-avatar-captain { width: 52px; height: 52px; }
+  .org-row-leads { flex-wrap: wrap; gap: 1rem; }
+  .org-dept-col { flex: 1 1 100%; max-width: 100%; }
+  .org-depts::before { display: none; }
+  .org-dept-col::before { display: none; }
+  .org-dept-col { margin-top: 0; }
+  .ach-track-wrap { padding: 0 44px; }
+  .ach-arrow { width: 36px; height: 36px; font-size: 1rem; }
+}
+
+/* ─── CONTACT US PAGE ─── */
+#contact {
+  position:relative;
+  min-height:720px;
+  padding:6.5rem 5% 5.5rem;
+  background:
+    radial-gradient(circle at 15% 45%, rgba(124,58,237,.14), transparent 38%),
+    radial-gradient(circle at 85% 30%, rgba(183,0,255,.09), transparent 35%),
+    #02060d;
+  overflow:hidden;
+  border-top:1px solid rgba(255,255,255,.05);
+}
+#contact::before {
+  content:''; position:absolute; inset:0; pointer-events:none; opacity:.22;
+  background-image:linear-gradient(rgba(183,0,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(183,0,255,.035) 1px,transparent 1px);
+  background-size:45px 45px;
+}
+.contact-header { position:relative; z-index:2; text-align:center; margin-bottom:3.5rem; }
+.contact-header .contact-kicker { display:block; font-family:'Orbitron',sans-serif; font-size:.58rem; letter-spacing:.3em; color:var(--cyan); text-transform:uppercase; margin-bottom:.65rem; }
+.contact-header h2 { font-family:'Orbitron',sans-serif; font-size:clamp(2rem,4vw,3rem); font-weight:900; letter-spacing:.05em; }
+.contact-header h2 span { color:var(--cyan); }
+.contact-header .contact-line { display:block; width:80px; height:2px; margin:.7rem auto .9rem; background:linear-gradient(90deg,var(--indigo),var(--cyan)); box-shadow:0 0 14px rgba(183,0,255,.35); }
+.contact-header p { max-width:600px; margin:0 auto; color:var(--muted); font-size:.9rem; }
+.contact-wrap { position:relative; z-index:2; max-width:1120px; margin:0 auto; display:grid; grid-template-columns:.85fr 1.15fr; gap:2rem; align-items:stretch; }
+.contact-panel { background:rgba(8,15,25,.82); border:1px solid var(--border); border-radius:10px; padding:2rem; backdrop-filter:blur(10px); position:relative; overflow:hidden; }
+.contact-panel::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--cyan),transparent); box-shadow:0 0 12px var(--cyan); }
+.contact-panel h3 { font-family:'Orbitron',sans-serif; font-size:1rem; letter-spacing:.08em; margin-bottom:.7rem; }
+.contact-panel > p { color:var(--muted); font-size:.84rem; line-height:1.7; margin-bottom:1.8rem; }
+.contact-items { display:flex; flex-direction:column; gap:1rem; }
+.contact-item { display:flex; gap:.9rem; align-items:flex-start; padding:.9rem; border:1px solid rgba(255,255,255,.06); background:rgba(255,255,255,.018); border-radius:6px; transition:border-color .25s,transform .25s,background .25s; }
+.contact-item:hover { border-color:rgba(183,0,255,.35); background:rgba(183,0,255,.035); transform:translateX(4px); }
+.contact-item-icon { width:38px; height:38px; flex:0 0 38px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(183,0,255,.25); border-radius:6px; color:var(--cyan); background:rgba(183,0,255,.06); }
+.contact-item-icon svg { width:19px; height:19px; stroke:currentColor; fill:none; stroke-width:1.6; }
+.contact-item strong { display:block; font-family:'Orbitron',sans-serif; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--white); margin-bottom:.25rem; }
+.contact-item span, .contact-item a { color:var(--muted); font-size:.78rem; text-decoration:none; line-height:1.5; }
+.contact-item a:hover { color:var(--cyan); }
+.contact-socials { display:flex; gap:.6rem; margin-top:1.4rem; flex-wrap:wrap; }
+.contact-socials a { display:inline-flex; align-items:center; gap:.4rem; border:1px solid var(--border); color:var(--muted); text-decoration:none; padding:.45rem .7rem; border-radius:4px; font-size:.65rem; text-transform:uppercase; letter-spacing:.08em; transition:.2s; }
+.contact-socials a:hover { color:var(--cyan); border-color:var(--cyan); background:rgba(183,0,255,.06); }
+.contact-form-panel { padding:2rem; }
+.contact-form { display:flex; flex-direction:column; gap:1rem; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.form-field { display:flex; flex-direction:column; gap:.4rem; }
+.contact-form label { font-family:'Orbitron',sans-serif; font-size:.58rem; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.contact-form input, .contact-form textarea, .contact-form select { background:#080f19; border:1px solid var(--border); border-radius:4px; color:var(--white); padding:.75rem .85rem; font-size:.84rem; font-family:'Inter',sans-serif; outline:none; width:100%; transition:border-color .2s,box-shadow .2s,background .2s; }
+.contact-form input:focus, .contact-form textarea:focus, .contact-form select:focus { border-color:var(--cyan); box-shadow:0 0 0 3px rgba(183,0,255,.09),0 0 18px rgba(183,0,255,.08); background:#0a111d; }
+.contact-form textarea { resize:vertical; min-height:145px; }
+.contact-form select { appearance:auto; }
+.form-submit { display:inline-flex; align-items:center; justify-content:center; gap:.55rem; width:max-content; background:var(--indigo); color:var(--white); border:1px solid rgba(255,255,255,.08); border-radius:4px; padding:.8rem 1.4rem; font-family:'Orbitron',sans-serif; font-size:.62rem; font-weight:700; letter-spacing:.15em; text-transform:uppercase; transition:.25s; }
+.form-submit:hover { background:#9F67FF; box-shadow:0 0 25px rgba(124,58,237,.4); transform:translateY(-2px); }
+.contact-status { min-height:1.1rem; color:var(--cyan); font-size:.7rem; letter-spacing:.05em; margin-top:.1rem; }
+.contact-note { font-size:.62rem; color:#647083; margin-top:.4rem; line-height:1.5; }
+@media (max-width:900px) { .contact-wrap{grid-template-columns:1fr;} }
+@media (max-width:700px) { #contact{padding:5rem 1rem 4rem;} .form-row{grid-template-columns:1fr;} .contact-panel,.contact-form-panel{padding:1.4rem;} }
+
+
+
+/* ═══════════════════════════════════════════════
+   MARS GARAGE — TYPOGRAPHY / SPACING REFINEMENT
+   Larger, cleaner text matching the reference card.
+═══════════════════════════════════════════════ */
+.garage-panel{
+  padding:2.05rem 2.05rem 3.55rem;
+}
+
+.garage-title-row{
+  gap:.8rem;
+  margin-bottom:.48rem;
+}
+
+.garage-rover-name{
+  font-size:clamp(1.65rem,2.75vw,2.35rem);
+  line-height:1.08;
+  letter-spacing:.035em;
+  white-space:nowrap;
+}
+
+.garage-rover-name small{
+  font-size:.42em;
+  margin-left:.38rem;
+  letter-spacing:.09em;
+}
+
+.garage-subtitle{
+  font-size:clamp(.66rem,.82vw,.78rem);
+  line-height:1.45;
+  letter-spacing:.065em;
+  max-width:100%;
+  margin-bottom:1.25rem;
+}
+
+.garage-accent-line{
+  margin:-.35rem 0 1.15rem;
+}
+
+.garage-section-heading{
+  font-size:.76rem;
+  letter-spacing:.14em;
+  margin-bottom:.75rem;
+}
+
+.garage-info-list.features-list{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.garage-info-list.features-list li{
+  min-height:58px;
+  padding:.7rem .7rem;
+  gap:.65rem;
+}
+
+.feature-icon{
+  width:28px;
+  height:28px;
+  flex-basis:28px;
+  font-size:.82rem;
+}
+
+.feature-text{
+  font-size:clamp(.61rem,.72vw,.72rem);
+  line-height:1.35;
+}
+
+.feature-text strong{
+  font-weight:600;
+}
+
+.garage-specs-wrap{
+  margin-top:1.2rem;
+}
+
+.garage-info-list.specs-list li{
+  grid-template-columns:34% 66%;
+  min-height:36px;
+  font-size:clamp(.61rem,.72vw,.72rem);
+}
+
+.garage-info-list.specs-list li strong{
+  font-weight:600;
+  padding:.52rem .4rem .52rem 0;
+}
+
+.garage-info-list.specs-list li span{
+  padding:.52rem 0 .52rem .8rem;
+}
+
+.garage-bay-code{
+  top:18px;
+  right:18px;
+  font-size:.65rem;
+}
+
+.garage-arrow{
+  width:32px;
+  height:32px;
+  bottom:13px;
+  font-size:1rem;
+}
+
+.garage-prev{right:235px;}
+.garage-next{right:193px;}
+
+.garage-rover-counter{
+  right:276px;
+  bottom:15px;
+  min-width:68px;
+  font-size:.58rem;
+  letter-spacing:.13em;
+}
+
+@media (max-width:1100px){
+  .garage-panel{padding:1.7rem 1.65rem 3.35rem;}
+  .garage-rover-name{font-size:clamp(1.4rem,2.8vw,2rem);}
+  .garage-info-list.features-list li{min-height:54px;padding:.58rem;}
+  .feature-icon{width:25px;height:25px;flex-basis:25px;font-size:.75rem;}
+  .feature-text{font-size:.61rem;}
+  .garage-info-list.specs-list li{min-height:33px;font-size:.61rem;}
+  .garage-prev{right:205px;}
+  .garage-next{right:165px;}
+  .garage-rover-counter{right:242px;}
+}
+
+@media (max-width:760px){
+  .garage-panel{padding:1.2rem 1rem 3.1rem;}
+  .garage-rover-name{font-size:clamp(1.05rem,4.8vw,1.5rem);}
+  .garage-subtitle{font-size:.55rem;margin-bottom:.9rem;}
+  .garage-section-heading{font-size:.62rem;margin-bottom:.55rem;}
+  .garage-info-list.features-list li{min-height:46px;padding:.45rem;gap:.4rem;}
+  .feature-icon{width:20px;height:20px;flex-basis:20px;font-size:.58rem;}
+  .feature-text{font-size:.49rem;line-height:1.25;}
+  .garage-specs-wrap{margin-top:.85rem;}
+  .garage-info-list.specs-list li{min-height:27px;font-size:.49rem;}
+  .garage-info-list.specs-list li strong{padding:.35rem .25rem .35rem 0;}
+  .garage-info-list.specs-list li span{padding:.35rem 0 .35rem .45rem;}
+  .garage-bay-code{font-size:.43rem;top:9px;right:9px;}
+  .garage-arrow{width:26px;height:26px;font-size:.78rem;bottom:8px;}
+  .garage-prev{right:82px;}
+  .garage-next{right:46px;}
+  .garage-rover-counter{right:118px;bottom:10px;min-width:48px;font-size:.43rem;}
+}
+
+</style>
+
+<style>
+/* =========================================================
+   MOBILE ROVER GARAGE FIX
+   Makes FEATURES + SPECS fully visible on phones.
+   Added after the existing rover styles so it overrides them.
+========================================================= */
+
+@media (max-width: 560px) {
+
+  /* Give the complete rover card enough vertical space */
+  .garage-stage {
+    width: 100%;
+    height: 800px !important;
+    min-height: 800px !important;
+    aspect-ratio: auto !important;
+    display: block !important;
+    overflow: hidden;
+  }
+
+  /* Rover image area */
+  .garage-rover-zone {
+    position: absolute !important;
+    inset: 0 0 auto 0 !important;
+    width: 100% !important;
+    height: 38% !important;
+    min-height: 0 !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid rgba(168,85,247,.22) !important;
+    background-size: 115% auto;
+    background-position: center center;
+  }
+
+  /* Information area gets the remaining space */
+  .garage-panel {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 38% !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 62% !important;
+    min-height: 0 !important;
+    padding: 1.05rem 1rem 4rem !important;
+    border-left: 0 !important;
+    border-top: 1px solid rgba(168,85,247,.18) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: thin;
+  }
+
+  .garage-rover-name {
+    font-size: 1.15rem !important;
+    line-height: 1.1 !important;
+    white-space: normal !important;
+  }
+
+  .garage-subtitle {
+    font-size: .48rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: .75rem !important;
+  }
+
+  .garage-accent-line {
+    margin: -.25rem 0 .8rem !important;
+  }
+
+  .garage-section-heading {
+    font-size: .60rem !important;
+    margin-bottom: .5rem !important;
+  }
+
+  /* Keep all six feature cards readable */
+  .garage-info-list.features-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    width: 100%;
+  }
+
+  .garage-info-list.features-list li {
+    min-height: 52px !important;
+    height: auto !important;
+    padding: .48rem .42rem !important;
+    gap: .42rem !important;
+    align-items: center !important;
+  }
+
+  .feature-icon {
+    width: 20px !important;
+    height: 20px !important;
+    flex: 0 0 20px !important;
+    font-size: .56rem !important;
+  }
+
+  .feature-text {
+    min-width: 0 !important;
+    font-size: .47rem !important;
+    line-height: 1.25 !important;
+    overflow-wrap: anywhere;
+  }
+
+  .feature-text strong {
+    font-size: 1em !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Specs are allowed to use their full width */
+  .garage-specs-wrap {
+    margin-top: .9rem !important;
+    padding-bottom: .8rem;
+  }
+
+  .garage-info-list.specs-list {
+    width: 100%;
+  }
+
+  .garage-info-list.specs-list li {
+    grid-template-columns: 36% 64% !important;
+    min-height: 29px !important;
+    height: auto !important;
+    font-size: .47rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .garage-info-list.specs-list li strong {
+    padding: .38rem .3rem .38rem 0 !important;
+  }
+
+  .garage-info-list.specs-list li span {
+    padding: .38rem 0 .38rem .45rem !important;
+    overflow-wrap: anywhere;
+  }
+
+  /* Keep navigation controls clear of the content */
+  .garage-arrow {
+    width: 28px !important;
+    height: 28px !important;
+    top: 19% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    font-size: .82rem !important;
+    z-index: 20 !important;
+  }
+
+  .garage-prev {
+    left: 9px !important;
+    right: auto !important;
+  }
+
+  .garage-next {
+    right: 9px !important;
+    left: auto !important;
+  }
+
+  .garage-rover-counter {
+    right: 50% !important;
+    bottom: auto !important;
+    top: 38% !important;
+    transform: translate(50%, -50%) !important;
+    min-width: 55px !important;
+    font-size: .38rem !important;
+    z-index: 20 !important;
+  }
+
+  .garage-bay-code {
+    display: none !important;
+  }
+}
+
+/* Very narrow phones: slightly smaller typography, same full layout */
+@media (max-width: 380px) {
+  .garage-stage {
+    height: 780px !important;
+    min-height: 780px !important;
+  }
+
+  .garage-panel {
+    padding-left: .8rem !important;
+    padding-right: .8rem !important;
+  }
+
+  .garage-info-list.features-list li {
+    min-height: 50px !important;
+    padding: .42rem .35rem !important;
+  }
+
+  .feature-icon {
+    width: 18px !important;
+    height: 18px !important;
+    flex-basis: 18px !important;
+  }
+
+  .feature-text,
+  .garage-info-list.specs-list li {
+    font-size: .44rem !important;
+  }
+}
+</style>
+
+</head>
+<body>
+
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<canvas id="cursor-trail-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:99997;"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#hero">SRISH<span>TI</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">About</a></li>
+    <li><a href="#projects">Rovers</a></li>
+    <li><a href="#competitions">Competitions</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#departments">Departments</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="#contact" class="nav-cta">Join Us</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <canvas id="hero-stars-canvas"></canvas>
+  <div class="hero-ground-glow"></div>
+
+  <!-- LEFT CONTENT -->
+  <div class="hero-left">
+    <span class="hero-team-tag">Mar Athanasius College of Engineering · Kothamangalam</span>
+
+    <div class="hero-title-top">SRISHTI</div>
+    <div class="hero-title-sub">ROBOTICS TEAM</div>
+
+    <div class="hero-taglines">
+      <span class="hero-tagline">MARS. OUR DESTINATION.</span>
+      <span class="hero-tagline">INNOVATION. OUR PATHWAY.</span>
+      <span class="hero-tagline">EXCELLENCE. OUR HABIT.</span>
+    </div>
+
+    <div class="hero-cta-row">
+      <a href="#projects" class="btn-discover">
+        DISCOVER OUR JOURNEY
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+      <a href="#contact" class="btn-join">JOIN US</a>
+    </div>
+  </div>
+
+  <!-- RIGHT — ROVER IMAGE -->
+  <div class="hero-right">
+    <img class="hero-rover-img" src="ROVER HERO.png" alt="Team Srishti Rover" onerror="this.style.display='none'"/>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    SCROLL
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div id="stats">
+  <div class="stat"><span class="stat-num" data-target="2018">0</span><span class="stat-label">Active Since</span></div>
+  <div class="stat"><span class="stat-num" data-target="4">0</span><span class="stat-label">Rover Generations</span></div>
+  <div class="stat"><span class="stat-num" data-target="6">0</span><span class="stat-label">INTL competitions</span></div>
+  <div class="stat"><span class="stat-num" data-target="6">0</span><span class="stat-label">Sub Teams</span></div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="starfield" id="about-stars"></div>
+  <h2 class="about-section-title reveal">About the Team</h2>
+  <span class="about-title-line reveal"></span>
+  <div class="about-block reveal">
+    <div class="about-photo-wrap">
+      <img src="ABOUT TEAM.png" alt="Team Srishti"/>
+      <div class="overlay-info">
+        <div class="overlay-label">MACE</div>
+        <div class="overlay-title">Team Srishti</div>
+        <div class="overlay-sub">20+ Engineers · Various Dept · Kothamangalam, Kerala</div>
+      </div>
+    </div>
+    <div class="about-copy">
+      <p><strong>Team Srishti</strong> is the official technical student team of <strong>Mar Athanasius College of Engineering, Kothamangalam, Kerala</strong>. The name <em>Srishti</em> — meaning <em>creation</em> in Sanskrit — reflects our core belief: that every problem deserves a purpose-built solution.</p>
+      <p>Founded by a group of passionate students, Srishti brings together hardware designers, firmware developers, and IoT architects who share one goal — bridging the gap between academic theory and real-world impact through embedded systems, smart sensors, and intelligent edge devices.</p>
+      <p>With the motto <strong>"Build. Iterate. Deploy."</strong>, we participate in national hackathons, rural development challenges, and inter-college technical fests — always shipping working prototypes, never just slides.</p>
+      <div class="mini-stats">
+        <div class="mini-stat"><span class="mini-stat-num">20+</span><span class="mini-stat-label">Engineers</span></div>
+        <div class="mini-stat"><span class="mini-stat-num">3+</span><span class="mini-stat-label">Years</span></div>
+        <div class="mini-stat"><span class="mini-stat-num">5</span><span class="mini-stat-label">Domains</span></div>
+        <div class="mini-stat"><span class="mini-stat-num">8+</span><span class="mini-stat-label">Hackathons</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="about-block reveal" style="direction:ltr;">
+    <div class="about-copy" style="order:1;">
+      <h2 style="font-size:clamp(1.5rem,3vw,2.2rem); margin-bottom:1.2rem;">Vision &amp; Mission</h2>
+      <p>Team Srishti aims to design and develop reliable, high-impact embedded and IoT systems through practical engineering, disciplined iteration, and continuous learning. Our vision is to become a benchmark for student-led hardware innovation in Kerala — inspiring the next wave of engineers to build things that work in the real world.</p>
+      <p>We operate across five technical domains — Embedded Systems, IoT &amp; Cloud, TinyML &amp; Edge AI, PCB Design, and Agricultural Technology — enabling cross-domain collaboration that produces holistic solutions rather than isolated prototypes.</p>
+      <div class="badge-strip" style="margin-top:1.8rem;">
+        <span class="badge">ESP32</span><span class="badge">8051</span><span class="badge">IoT</span>
+        <span class="badge cyan">Embedded C</span><span class="badge cyan">RTOS</span>
+        <span class="badge">TinyML</span><span class="badge">GSM/SMS</span>
+        <span class="badge cyan">PCB Design</span><span class="badge">KiCad</span>
+        <span class="badge cyan">Edge Impulse</span>
+      </div>
+    </div>
+    <div class="about-photo-wrap" style="order:2;">
+      <img src="MISSION AND VISION.jpg" alt="Vision &amp; Mission"/>
+      <div class="overlay-info">
+        <div class="overlay-label">Vision &amp; Mission</div>
+        <div class="overlay-title">Build. Iterate. Deploy.</div>
+        <div class="overlay-sub">Embedded · IoT · TinyML · PCB Design · AgriTech</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS / MARS GARAGE -->
+<section id="projects">
+  <div class="projects-header">
+    <h2>MARS <span>GARAGE</span></h2>
+    <span class="proj-title-line"></span>
+    <p>Explore · Engineer · Deploy</p>
+  </div>
+
+  <div class="garage-stage" id="roverGarage">
+    <div class="garage-rover-zone" aria-hidden="true">
+      <img class="garage-rover" src="pranav3.png" alt="Srishti Rover" onerror="this.style.display='none'" />
+    </div>
+
+    <div class="garage-bay-code">BAY-02</div>
+
+    <div class="garage-panel">
+      <div class="garage-title-row">
+        <div class="garage-rover-name" id="garageRoverName">PRANA 3 <small>VER 3</small></div>
+      </div>
+      <p class="garage-subtitle" id="garageRoverSubtitle">AUTONOMOUS TERRAIN SURVEILLANCE ROVER</p>
+      <div class="garage-accent-line"></div>
+
+      <section class="garage-features-wrap" aria-label="Rover features">
+        <h3 class="garage-section-heading">FEATURES</h3>
+        <ul class="garage-info-list features-list" id="garageFeatures"></ul>
+      </section>
+
+      <section class="garage-specs-wrap" aria-label="Rover system specifications">
+        <h3 class="garage-section-heading">SPECS</h3>
+        <ul class="garage-info-list specs-list" id="garageSpecs"></ul>
+      </section>
+    </div>
+
+    <button class="garage-arrow garage-prev" id="garagePrev" type="button" aria-label="Previous rover">‹</button>
+    <button class="garage-arrow garage-next" id="garageNext" type="button" aria-label="Next rover">›</button>
+  </div>
+
+  <div class="garage-rover-counter" id="garageCounter">01 / 06</div>
+</section>
+
+<!-- COMPETITIONS -->
+<section id="competitions">
+  <canvas id="comp-stars"></canvas>
+  <svg class="comp-globe-deco" width="500" height="500" viewBox="0 0 500 500" fill="none" aria-hidden="true">
+    <circle cx="250" cy="250" r="240" stroke="white" stroke-width="1.5"/>
+    <ellipse cx="250" cy="250" rx="120" ry="240" stroke="white" stroke-width="1.5"/>
+    <ellipse cx="250" cy="250" rx="240" ry="80" stroke="white" stroke-width="1.5"/>
+    <line x1="10" y1="250" x2="490" y2="250" stroke="white" stroke-width="1.5"/>
+    <line x1="250" y1="10" x2="250" y2="490" stroke="white" stroke-width="1.5"/>
+  </svg>
+  <div class="comp-header reveal">
+    <h2>Competitions</h2>
+    <span class="comp-line"></span>
+    <p>Where Srishti competes on the world stage — and builds the stage itself.</p>
+  </div>
+  <div class="comp-arena">
+    <div class="comp-card comp-card-erc reveal">
+      <div class="comp-visual"><div class="comp-visual-bg"></div><img class="comp-visual-image"
+     src="erc.jpg"
+     alt="European Rover Challenge"><span class="comp-abbrev">ERC</span><span class="comp-role-pill role-competitor">Competitor</span></div>
+      <div class="comp-body">
+        <div class="comp-fullname">European Rover Challenge</div>
+        <div class="comp-name">Poland · Annual International Field Competition</div>
+        <p class="comp-desc">One of the world's most prestigious student rover competitions, ERC tests planetary rover prototypes across autonomy, manipulation, science payload, and navigation tasks.</p>
+        <div class="comp-results"><span class="comp-result-tag result-gold">🥇 1st Rank — Tokyo</span><span class="comp-result-tag result-silver">🥈 1st Runner-up — Bangkok</span><span class="comp-result-tag result-qual">✦ ERC Qualifier 2024</span></div>
+        <a href="https://roverchallenge.eu" target="_blank" rel="noopener" class="comp-link">roverchallenge.eu <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+      </div>
+    </div>
+    <div class="comp-card comp-card-irc reveal">
+      <div class="comp-visual"><div class="comp-visual-bg"></div><img class="comp-visual-image"
+     src="irc.jpg"
+     alt="International rover challenge"><span class="comp-abbrev">IRC</span><span class="comp-role-pill role-competitor">Competitor</span></div>
+      <div class="comp-body">
+        <div class="comp-fullname">International Rover Challenge</div>
+        <div class="comp-name">Asia-Pacific · Flagship Space Robotics Event</div>
+        <p class="comp-desc">Asia-Pacific's premier space robotics competition where teams are judged on mission performance and engineering design across a full week of on-site rover tasks.</p>
+        <div class="comp-results"><span class="comp-result-tag result-qual">✦ IRC Finals 2026</span><span class="comp-result-tag result-qual">✦ Design Review Cleared</span><span class="comp-result-tag result-gold">🏅 Multiple Podiums</span></div>
+        <a href="https://www.roverchallenge.in" target="_blank" rel="noopener" class="comp-link">roverchallenge.in <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="comp-timeline-wrap reveal">
+    <div class="comp-timeline-label">Mission Log</div>
+    <div class="comp-timeline">
+      <div class="comp-tl-item"><div class="comp-tl-dot"></div><div class="comp-tl-year">2022</div><div class="comp-tl-event">IRC · Asia Pacific Robotics</div><div class="comp-tl-where">📍 Bangkok, Thailand</div><span class="comp-result-tag result-silver" style="font-size:.6rem;padding:.15rem .5rem;">🥈 1st Runner-up</span></div>
+      <div class="comp-tl-item"><div class="comp-tl-dot"></div><div class="comp-tl-year">2023</div><div class="comp-tl-event">IRC · Asia Pacific Robotics</div><div class="comp-tl-where">📍 Tokyo, Japan</div><span class="comp-result-tag result-gold" style="font-size:.6rem;padding:.15rem .5rem;">🥇 1st Place</span></div>
+      <div class="comp-tl-item"><div class="comp-tl-dot"></div><div class="comp-tl-year">2024</div><div class="comp-tl-event">ERC · European Rover Challenge</div><div class="comp-tl-where">📍 Poland</div><span class="comp-result-tag result-qual" style="font-size:.6rem;padding:.15rem .5rem;">✦ Represented MACE</span></div>
+      <div class="comp-tl-item"><div class="comp-tl-dot"></div><div class="comp-tl-year">2026</div><div class="comp-tl-event">IRC Finals Qualification</div><div class="comp-tl-where">📍 On-site Finals</div><span class="comp-result-tag result-qual" style="font-size:.6rem;padding:.15rem .5rem;">✦ Design Review Cleared</span></div>
+    </div>
+  </div>
+  <div class="ach-dots" id="achDots"></div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="ach-stars" id="achStars"></div>
+  <div class="ach-header reveal">
+    <h2>Our Achievements</h2>
+    <span class="ach-line"></span>
+    <p>Our journey of excellence</p>
+  </div>
+  <div style="position:relative;">
+    <button class="ach-arrow ach-prev" onclick="achMove(-1)" aria-label="Previous">&#8249;</button>
+    <button class="ach-arrow ach-next" onclick="achMove(1)" aria-label="Next">&#8250;</button>
+    <div class="ach-track-wrap">
+      <div class="ach-track" id="achTrack">
+        <div class="ach-card reveal"><span class="ach-rank">🥇 1st Rank · Competition 2023</span><div class="ach-visual"><img src="ACH1.png" alt="1st Rank" style="width:100%;height:100%;object-fit:cover;object-position:center top;position:absolute;inset:0;z-index:1;"/></div><div class="ach-caption"><p>Secured <strong>1st Rank</strong> at IEEE ASIA PACIFIC REGION 10 Robotics Competition at Tokyo, Japan</p></div></div>
+        <div class="ach-card reveal"><span class="ach-rank">🥈 2nd Rank · Competition 2022</span><div class="ach-visual"><img src="ACH2.png" alt="2nd Rank" style="width:100%;height:100%;object-fit:cover;object-position:center top;position:absolute;inset:0;z-index:1;"/></div><div class="ach-caption"><p>Secured <strong>1st Runner up</strong> in IEEE ASIA PACIFIC REGION 10 Robotics Competition at Bangkok, Thailand</p></div></div>
+        <div class="ach-card reveal"><span class="ach-rank">🏅 Achievements · IRC 2026</span><div class="ach-visual"><div class="ach-visual"><img src="list.jpeg" alt="2nd Rank" style="width:100%;height:100%;object-fit:cover;object-position:center top;position:absolute;inset:0;z-index:1;"/></div></div><div class="ach-caption"><p>Secured <strong>11th place</strong> and advanced to the IRC 2026 finals. Alse secured all Karala <strong>First</strong></p></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="ach-dots" id="achDots"></div>
+</section>
+
+<!-- DEPARTMENTS — CONNECTED TECHNICAL SYSTEM / FIVE DEPARTMENTS -->
+<section id="departments" class="gg-wrap">
+  <div class="gg-head reveal">
+    <span class="gg-kicker">Connected · Technical · Dynamic</span>
+    <div class="gg-title">OUR <span style="color:var(--cyan)">DEPARTMENTS</span></div>
+    <span class="gg-line"></span>
+  </div>
+
+  <div class="gg-system" id="ggSystem">
+    <svg class="gg-connections" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true">
+      <circle class="gg-center-ring" cx="500" cy="250" r="106"></circle>
+      <circle class="gg-center-ring" cx="500" cy="250" r="132" style="animation-direction:reverse;animation-duration:26s"></circle>
+
+      <!-- Five department connections -->
+      <path class="gg-connection" d="M500 168 L500 72"></path>
+      <path class="gg-connection" d="M420 218 L205 155"></path>
+      <path class="gg-connection" d="M580 218 L795 155"></path>
+      <path class="gg-connection" d="M425 300 L250 425"></path>
+      <path class="gg-connection" d="M575 300 L750 425"></path>
+
+      <circle class="gg-node" cx="500" cy="168" r="3"></circle>
+      <circle class="gg-node" cx="420" cy="218" r="3"></circle>
+      <circle class="gg-node" cx="580" cy="218" r="3"></circle>
+      <circle class="gg-node" cx="425" cy="300" r="3"></circle>
+      <circle class="gg-node" cx="575" cy="300" r="3"></circle>
+    </svg>
+
+    <!-- CENTER -->
+    <div class="gg-core">
+      <svg class="gg-core-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M19.1 4.9l-2.8 2.8M7.7 16.3l-2.8 2.8"></path>
+      </svg>
+      <div class="gg-core-name">SRISHTI</div>
+      <div class="gg-core-sub">MACE ROBOTICS TEAM</div>
+    </div>
+
+    <!-- 01 MECHANICAL -->
+    <div class="gg-card gg-mechanical" style="--c:#00e5ff">
+      <div class="gg-corner"></div>
+      <div class="gg-body">
+        <div class="gg-icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M19.1 4.9l-2.8 2.8M7.7 16.3l-2.8 2.8"></path>
+          </svg>
+        </div>
+        <div class="gg-copy">
+          <div class="gg-name">Mechanical</div>
+          <div class="gg-desc">Systems</div>
+        </div>
+      </div>
+      <div class="gg-focus">
+        <div class="gg-focus-title">Key Focus</div>
+        <div class="gg-focus-list"><span>Chassis</span><span>Drivetrain</span><span>Suspension</span><span>Fabrication</span></div>
+      </div>
+      <div class="gg-num">01</div>
+    </div>
+
+    <!-- 02 ELECTRICAL -->
+    <div class="gg-card gg-electrical" style="--c:#00e5ff">
+      <div class="gg-corner"></div>
+      <div class="gg-body">
+        <div class="gg-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M13 2L5 13h6l-1 9 9-12h-6l0-8z"></path>
+          </svg>
+        </div>
+        <div class="gg-copy">
+          <div class="gg-name">Electrical</div>
+          <div class="gg-desc">Systems</div>
+        </div>
+      </div>
+      <div class="gg-focus">
+        <div class="gg-focus-title">Key Focus</div>
+        <div class="gg-focus-list"><span>Power Systems</span><span>Motors</span><span>Wiring</span><span>Protection</span></div>
+      </div>
+      <div class="gg-num">02</div>
+    </div>
+
+    <!-- 03 ELECTRONICS -->
+    <div class="gg-card gg-electronics" style="--c:#00e5ff">
+      <div class="gg-corner"></div>
+      <div class="gg-body">
+        <div class="gg-icon">
+          <svg viewBox="0 0 24 24">
+            <rect x="5" y="5" width="14" height="14" rx="2"></rect>
+            <path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </div>
+        <div class="gg-copy">
+          <div class="gg-name">Electronics</div>
+          <div class="gg-desc">Systems</div>
+        </div>
+      </div>
+      <div class="gg-focus">
+        <div class="gg-focus-title">Key Focus</div>
+        <div class="gg-focus-list"><span>Sensors</span><span>PCBs</span><span>Embedded</span><span>Communication</span></div>
+      </div>
+      <div class="gg-num">03</div>
+    </div>
+
+    <!-- 04 SOFTWARE -->
+    <div class="gg-card gg-software" style="--c:#7C3AED">
+      <div class="gg-corner"></div>
+      <div class="gg-body">
+        <div class="gg-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 5h16v14H4z"></path>
+            <path d="M8 9l3 3-3 3M13 15h3"></path>
+          </svg>
+        </div>
+        <div class="gg-copy">
+          <div class="gg-name">Software</div>
+          <div class="gg-desc">Systems</div>
+        </div>
+      </div>
+      <div class="gg-focus">
+        <div class="gg-focus-title">Key Focus</div>
+        <div class="gg-focus-list"><span>Autonomy</span><span>Navigation</span><span>Control</span><span>Computer Vision</span></div>
+      </div>
+      <div class="gg-num">04</div>
+    </div>
+
+    <!-- 05 AEROSPACE -->
+    <div class="gg-card gg-aerospace" style="--c:#00e5ff">
+      <div class="gg-corner"></div>
+      <div class="gg-body">
+        <div class="gg-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 12l18-8-6 8 6 8-18-8z"></path>
+            <path d="M9 12H3M9 12l-2 6"></path>
+          </svg>
+        </div>
+        <div class="gg-copy">
+          <div class="gg-name">Aerospace</div>
+          <div class="gg-desc">Systems</div>
+        </div>
+      </div>
+      <div class="gg-focus">
+        <div class="gg-focus-title">Key Focus</div>
+        <div class="gg-focus-list"><span>UAV Systems</span><span>Flight Control</span><span>Aerial Robotics</span><span>Mission Systems</span></div>
+      </div>
+      <div class="gg-num">05</div>
+    </div>
+  </div>
+
+  <div class="gg-footer">Five disciplines. One mission. <span>Engineering the future.</span></div>
+</section>
+
+<!-- TEAM -->
+<section id="team">
+  <div class="section-header reveal" style="margin-bottom:3rem;">
+    <div class="section-eyebrow">The People</div>
+    <h2>Meet the Team</h2>
+    <p class="section-desc">Guided by Dr. Bos Mathew Jos, our 20+ strong crew spans six specialized sub-teams — from autonomy and hardware to media and documentation.</p>
+  </div>
+  <div class="org-chart reveal">
+    <div class="org-row org-row-top">
+      <div class="org-node">
+        <div class="org-avatar org-avatar-advisor">BMJ</div>
+        <div class="org-label-top">Faculty Advisor</div>
+        <a href="https://www.linkedin.com/in/dr-bos-mathew-jos" target="_blank" rel="noopener" class="org-name-link">Dr. Bos Mathew Jos<span class="li-badge">in LinkedIn</span></a>
+      </div>
+    </div>
+    <div class="org-connector-v"></div>
+    <div class="org-row org-row-leads">
+      <div class="org-node"><div class="org-avatar org-avatar-lead">YI</div><div class="org-label-top">Manager</div><a href="https://www.linkedin.com/in/yazdan-isham" target="_blank" rel="noopener" class="org-name-link">Yazdan Isham<span class="li-badge">in LinkedIn</span></a></div>
+      <div class="org-node"><div class="org-avatar org-avatar-captain">MS</div><div class="org-label-top">Team Captain</div><a href="https://www.linkedin.com/in/alfred" target="_blank" rel="noopener" class="org-name-link">Alfred Jeson<span class="li-badge">in LinkedIn</span></a></div>
+      <div class="org-node"><div class="org-avatar org-avatar-lead">SZ</div><div class="org-label-top">Vice Captain</div><a href="https://www.linkedin.com/in/siona-shaji-zacharias" target="_blank" rel="noopener" class="org-name-link">Siona Shaji Zacharias<span class="li-badge">in LinkedIn</span></a></div>
+    </div>
+    <div class="org-connector-v"></div>
+    <div class="org-depts">
+      <div class="org-dept-col"><div class="org-dept-header">Manipulator</div><div class="org-dept-members"><div class="org-dept-member"><span class="org-dept-role">Lead</span><a href="https://www.linkedin.com/in/rasheshan" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Rasheshan<span class="li-tip">View LinkedIn</span></a></div><div class="org-dept-member"><span class="org-dept-role">Controls Lead</span><a href="https://www.linkedin.com/in/devika" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Devika<span class="li-tip">View LinkedIn</span></a></div><div class="org-dept-member"><span class="org-dept-role">Controls Team</span><a href="https://www.linkedin.com/in/albert" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Albert<span class="li-tip">View LinkedIn</span></a></div></div></div>
+      <div class="org-dept-col"><div class="org-dept-header">Communication</div><div class="org-dept-members"><div class="org-dept-member"><span class="org-dept-role">Lead</span><a href="https://www.linkedin.com/in/annabel" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Annabel<span class="li-tip">View LinkedIn</span></a></div><div class="org-dept-member"><span class="org-dept-role">Team Member</span><a href="https://www.linkedin.com/in/annita" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Annita<span class="li-tip">View LinkedIn</span></a></div></div></div>
+      <div class="org-dept-col"><div class="org-dept-header">Software</div><div class="org-dept-members"><div class="org-dept-member"><span class="org-dept-role">Autonomy Lead</span><a href="https://www.linkedin.com/in/mathew-software" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Mathew<span class="li-tip">View LinkedIn</span></a></div></div></div>
+      <div class="org-dept-col"><div class="org-dept-header">Media</div><div class="org-dept-members"><div class="org-dept-member"><span class="org-dept-role">Lead</span><a href="https://www.linkedin.com/in/aanandhkrishnan" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Aanandhkrishnan<span class="li-tip">View LinkedIn</span></a></div><div class="org-dept-member"><span class="org-dept-role">Team Member</span><a href="https://www.linkedin.com/in/nihad" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Nihad<span class="li-tip">View LinkedIn</span></a></div><div class="org-dept-member"><span class="org-dept-role">Graphic Designer</span><a href="https://www.linkedin.com/in/bhadra" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Bhadra<span class="li-tip">View LinkedIn</span></a></div></div></div>
+      <div class="org-dept-col"><div class="org-dept-header">Documentation</div><div class="org-dept-members"><div class="org-dept-member"><span class="org-dept-role">Lead</span><a href="https://www.linkedin.com/in/nidie" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Nidhi<span class="li-tip">View LinkedIn</span></a></div><div class="org-dept-member"><span class="org-dept-role">Team Member</span><a href="https://www.linkedin.com/in/jerom" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Adeeba Salim<span class="li-tip">View LinkedIn</span></a></div></div></div>
+    </div>
+    <div class="org-depts org-depts-lower">
+      <div class="org-dept-col org-dept-col-wide"><div class="org-dept-header">Design &amp; Manufacturing</div><div class="org-dept-members org-dept-members-grid"><div class="org-dept-member"><span class="org-dept-role">Team Member</span><a href="https://www.linkedin.com/in/nihal" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Nihal<span class="li-tip">View LinkedIn</span></a></div><div class="org-dept-member"><span class="org-dept-role">Team Member</span><a href="https://www.linkedin.com/in/bilan" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Rilan<span class="li-tip">View LinkedIn</span></a></div><div class="org-dept-member"><span class="org-dept-role">Team Member</span><a href="https://www.linkedin.com/in/nithal" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>muhammed-safwan<span class="li-tip">View LinkedIn</span></a></div><div class="org-dept-member"><span class="org-dept-role">Team Member</span><a href="https://www.linkedin.com/in/shazeb" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Shazeb<span class="li-tip">View LinkedIn</span></a></div></div></div>
+      <div class="org-dept-col org-dept-col-wide"><div class="org-dept-header">Hardware</div><div class="org-dept-members org-dept-members-grid"><div class="org-dept-member"><span class="org-dept-role">Team Member</span><a href="https://www.linkedin.com/in/george" target="_blank" rel="noopener" class="org-li-link"><span class="li-icon"><svg width="10" height="10" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>Shaheem<span class="li-tip">View LinkedIn</span></a></div></div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CONTACT US -->
+<section id="contact">
+  <div class="contact-header reveal">
+    <span class="contact-kicker">Connect · Collaborate · Create</span>
+    <h2>CONTACT <span>US</span></h2>
+    <span class="contact-line"></span>
+    <p>Have a project idea, partnership opportunity, competition query, or want to join Team Srishti? Send us a message.</p>
+  </div>
+
+  <div class="contact-wrap">
+    <div class="contact-panel reveal">
+      <h3>Let's Build Something</h3>
+      <p>Reach out to Team Srishti at Mar Athanasius College of Engineering. We are always open to meaningful technical collaborations and new ideas.</p>
+
+      <div class="contact-items">
+        <div class="contact-item">
+          <div class="contact-item-icon"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-12A7 7 0 0 0 5 9c0 5.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.3"/></svg></div>
+          <div><strong>Location</strong><span>Mar Athanasius College of Engineering<br>Kothamangalam, Kerala, India</span></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></div>
+          <div><strong>Email</strong><a href="mailto:teamsrishti00@gmail.com">teamsrishti00@gmail.com</a></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon"><svg viewBox="0 0 24 24"><path d="M6.6 3.5 9 3l2 5-2.2 1.6a16 16 0 0 0 5.6 5.6L16 13l5 2 .5 2.4a2 2 0 0 1-2 2.4C11.5 19.4 4.6 12.5 4.2 4.5a2 2 0 0 1 2.4-1z"/></svg></div>
+          <div><strong>Team Enquiries</strong><span>Use the form to reach the appropriate team.</span></div>
+        </div>
+      </div>
+
+      <div class="contact-socials">
+        <a href="#team">Our Team</a>
+        <a href="#departments">Departments</a>
+        <a href="#projects">Our Rovers</a>
+      </div>
+    </div>
+
+    <div class="contact-panel contact-form-panel reveal">
+      <h3>Send a Message</h3>
+      <p>Fill in the details below and we'll get back to you.</p>
+      <form method="POST" action="https://formsubmit.co/teamsrishti00@gmail.com" class="contact-form" id="contactForm">
+        <input type="hidden" name="_subject" value="New Team Srishti Website Enquiry">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <div class="form-row">
+          <div class="form-field"><label for="contactName">Name</label><input id="contactName" name="name" type="text" placeholder="Your name" required></div>
+          <div class="form-field"><label for="contactEmail">Email</label><input id="contactEmail" name="email" type="email" placeholder="you@example.com" required></div>
+        </div>
+        <div class="form-field"><label for="contactSubject">Subject</label><input id="contactSubject" name="subject" type="text" placeholder="How can we help?" required></div>
+        <div class="form-field">
+          <label for="contactType">Enquiry Type</label>
+          <select id="contactType" name="type">
+            <option value="general">General Enquiry</option>
+            <option value="collaboration">Collaboration</option>
+            <option value="competition">Competition</option>
+            <option value="join">Join Team Srishti</option>
+            <option value="project">Project / Technical</option>
+          </select>
+        </div>
+        <div class="form-field"><label for="contactMessage">Message</label><textarea id="contactMessage" name="message" placeholder="Write your message here..." required></textarea></div>
+        <button class="form-submit" type="submit">SEND MESSAGE <span>→</span></button>
+        <div class="contact-status" id="contactStatus" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SRISH<span>TI</span></div>
+  <div class="footer-copy">© 2026 Team Srishti — MACE, Kothamangalam</div>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="#competitions">Competitions</a>
+    <a href="https://asrc.space" target="_blank" rel="noopener">ASRC</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+<script>
+/* ══ CURSOR ══ */
+const dot=document.getElementById('cursor-dot');
+const ring=document.getElementById('cursor-ring');
+const trailCanvas=document.getElementById('cursor-trail-canvas');
+const tctx=trailCanvas.getContext('2d');
+let mx=0,my=0,rx=0,ry=0;
+trailCanvas.width=window.innerWidth;trailCanvas.height=window.innerHeight;
+window.addEventListener('resize',()=>{trailCanvas.width=window.innerWidth;trailCanvas.height=window.innerHeight;});
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.left=mx+'px';dot.style.top=my+'px';});
+document.addEventListener('mousedown',()=>{dot.classList.add('clicking');ring.classList.add('clicking');});
+document.addEventListener('mouseup',()=>{dot.classList.remove('clicking');ring.classList.remove('clicking');});
+document.querySelectorAll('a,button,.showcase-nav,.dot,.hamburger,.mini-stat').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{dot.classList.add('hovering');ring.classList.add('hovering');});
+  el.addEventListener('mouseleave',()=>{dot.classList.remove('hovering');ring.classList.remove('hovering');});
+});
+const trail=[];
+function animCursor(){
+  rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+  trail.push({x:mx,y:my});
+  if(trail.length>28)trail.shift();
+  tctx.clearRect(0,0,trailCanvas.width,trailCanvas.height);
+  for(let i=1;i<trail.length;i++){
+    const p=trail[i-1],c=trail[i],prog=i/trail.length;
+    tctx.beginPath();tctx.moveTo(p.x,p.y);tctx.lineTo(c.x,c.y);
+    tctx.strokeStyle=`rgba(183,0,255,${prog*0.35})`;
+    tctx.lineWidth=prog*2.5;tctx.lineCap='round';tctx.stroke();
+  }
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+
+/* ══ NAV ══ */
+function toggleNav(){document.getElementById('navLinks').classList.toggle('open');}
+
+/* ══ HERO STARS CANVAS ══ */
+(function(){
+  const c=document.getElementById('hero-stars-canvas');
+  const ctx=c.getContext('2d');
+  let w,h,stars=[];
+  function resize(){
+    w=c.width=window.innerWidth;
+    h=c.height=window.innerHeight;
+    stars=[];
+    for(let i=0;i<220;i++){
+      stars.push({
+        x:Math.random()*w, y:Math.random()*h,
+        r:Math.random()*1.4+.2,
+        a:Math.random(),
+        da:(Math.random()-.5)*.006,
+        speed:Math.random()*.15+.03
+      });
+    }
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    stars.forEach(s=>{
+      s.a+=s.da;
+      if(s.a<=0||s.a>=1)s.da*=-1;
+      // slow drift
+      s.x+=s.speed;
+      if(s.x>w)s.x=0;
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(255,255,255,${s.a*0.85})`;ctx.fill();
+    });
+    // occasional purple sparkle
+    stars.forEach((s,i)=>{
+      if(i%7===0&&s.a>.7){
+        ctx.beginPath();ctx.arc(s.x,s.y,s.r*1.8,0,Math.PI*2);
+        ctx.fillStyle=`rgba(183,0,255,${(s.a-.7)*0.5})`;ctx.fill();
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══ STARS helpers ══ */
+const twStyle=document.createElement('style');
+twStyle.textContent='@keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}';
+document.head.appendChild(twStyle);
+function makeStars(el,n){
+  if(!el)return;
+  for(let i=0;i<n;i++){
+    const s=document.createElement('div');const sz=Math.random()*2+.5;
+    Object.assign(s.style,{position:'absolute',width:sz+'px',height:sz+'px',borderRadius:'50%',
+      background:'rgba(255,255,255,'+(Math.random()*.6+.2)+')',
+      left:Math.random()*100+'%',top:Math.random()*100+'%',
+      animation:`twinkle ${Math.random()*4+3}s ease-in-out infinite`,
+      animationDelay:Math.random()*5+'s'});
+    el.appendChild(s);
+  }
+}
+makeStars(document.getElementById('about-stars'),60);
+makeStars(document.getElementById('achStars'),80);
+
+/* ══ COMPETITION STARS ══ */
+(function(){
+  const c=document.getElementById('comp-stars');if(!c)return;
+  c.width=window.innerWidth;c.height=c.parentElement.offsetHeight;
+  const ctx=c.getContext('2d');const stars=[];
+  for(let i=0;i<120;i++)stars.push({x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.2+.3,a:Math.random(),da:(Math.random()-.5)*.008});
+  function draw(){ctx.clearRect(0,0,c.width,c.height);stars.forEach(s=>{s.a+=s.da;if(s.a<=0||s.a>=1)s.da*=-1;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${s.a})`;ctx.fill();});requestAnimationFrame(draw);}
+  draw();
+  window.addEventListener('resize',()=>{c.width=window.innerWidth;c.height=c.parentElement.offsetHeight;});
+})();
+
+/* ══ ACHIEVEMENTS CAROUSEL ══ */
+let achIdx=0;
+const achTrack=document.getElementById('achTrack');
+const achCards=document.querySelectorAll('.ach-card');
+const achDotsEl=document.getElementById('achDots');
+let achPerView=window.innerWidth<=820?1:2;
+const achTotal=Math.ceil(achCards.length/achPerView);
+function buildAchDots(){achDotsEl.innerHTML='';for(let i=0;i<achTotal;i++){const d=document.createElement('div');d.className='ach-dot'+(i===0?' active':'');d.onclick=()=>goAch(i);achDotsEl.appendChild(d);}}
+function goAch(i){achIdx=Math.max(0,Math.min(i,achTotal-1));const pct=-(achIdx*(100/achPerView+1.2));achTrack.style.transform=`translateX(${pct}%)`;document.querySelectorAll('.ach-dot').forEach((d,j)=>d.classList.toggle('active',j===achIdx));}
+function achMove(d){goAch(achIdx+d);}
+buildAchDots();
+window.addEventListener('resize',()=>{const np=window.innerWidth<=820?1:2;if(np!==achPerView){achPerView=np;buildAchDots();goAch(0);}});
+
+/* ══ GARAGE / ROVER CAROUSEL ══ */
+(() => {
+  const garage = document.getElementById('roverGarage');
+  const nameEl = document.getElementById('garageRoverName');
+  const subtitleEl = document.getElementById('garageRoverSubtitle');
+  const specsEl = document.getElementById('garageSpecs');
+  const featuresEl = document.getElementById('garageFeatures');
+  const counterEl = document.getElementById('garageCounter');
+  const prevBtn = document.getElementById('garagePrev');
+  const nextBtn = document.getElementById('garageNext');
+
+  if(!garage || !nameEl || !subtitleEl || !specsEl || !featuresEl || !prevBtn || !nextBtn) return;
+
+  const rovers = [
+    {
+      name:'PRANA 3', number:'VER 3', subtitle:'AUTONOMOUS TERRAIN SURVEILLANCE ROVER', image:'pranav3.png',
+      specs:[
+        ['Length - breadth','1.2m'],
+        ['Drive','4-wheel mobility system'],
+        ['Weight','40 kg'],
+        ['Sensors','IMU and Encoder'],
+        ['Filtering Algorithm','Kalman filter']
+      ],
+      features:[
+        ['Independant swerce contoller','◎'],
+        ['Differntial drive','♧'],
+        ['Uses PID contoller','◈'],
+        ['Wireless remote operation and telemetry','▤'],
+        ['Modular platform for exploration missions','△'],
+        ['Field-ready modular architecture','⌁']
+      ]
+    },
+    {
+      name:'PRANA 2', number:'VER 2', subtitle:'AUTONOMOUS TERRAIN SURVEILLANCE ROVER', image:'pranaV2.png',
+      specs:[
+        ['Length x breadth','1.4m x 1.2m'],
+        ['Drive','4-wheel mobility system'],
+        ['Weight','65 kg'],
+        ['Sensors','IMU and Encoder'],
+        ['Filtering Algorithm','Kalman filter']
+      ],
+      features:[
+        ['Independant swerce contoller','◎'],
+        ['Differntial drive','♧'],
+        ['Uses PID contoller','◈'],
+        ['Wireless remote operation and telemetry','▤'],
+        ['Modular platform for exploration missions','△'],
+        ['Field-ready modular architecture','⌁']
+      ]
+    },
+    {
+      name:'PRANA 1', number:'VER 1', subtitle:'AUTONOMOUS TERRAIN SURVEILLANCE ROVER', image:'prana.jpg',
+      specs:[
+        ['Length x breadth','1.4m x 1.2m'],
+        ['Drive','4-wheel mobility system'],
+        ['Weight','65 kg'],
+        ['Sensors','IMU and Encoder'],
+        ['Filtering Algorithm','Kalman filter']
+      ],
+      features:[
+        ['Independant swerce contoller','◎'],
+        ['Differntial drive','♧'],
+        ['Uses PID contoller','◈'],
+        ['Wireless remote operation and telemetry','▤'],
+        ['Modular platform for exploration missions','△'],
+        ['Field-ready modular architecture','⌁']
+      ]
+    },
+    {
+      name:'MANIPULATOR', number:'ARM SYSTEM', subtitle:'ROBOTIC MANIPULATOR PLATFORM', image:'manipulator.png',
+      specs:[
+        ['Platform','Robotic manipulator'],
+        ['System','Multi-joint arm'],
+        ['Control','Remote / programmed control'],
+        ['Payload','Modular end effector'],
+        ['Application','Object handling']
+      ],
+      features:[
+        ['Designed for precise object manipulation','◎'],
+        ['Multi-joint robotic movement','♧'],
+        ['Modular end-effector support','◈'],
+        ['Suitable for sample and object handling','▤'],
+        ['Built for robotics research and field applications','△'],
+        ['Configurable mission payloads','⌁']
+      ]
+    },
+    {
+      name:'COAL MINE ROVER', number:'ROVER 05', subtitle:'UNDERGROUND INSPECTION ROVER', image:'coal.png',
+      specs:[
+        ['Platform','Mine exploration rover'],
+        ['Navigation','Remote / assisted navigation'],
+        ['Drive','4-wheel mobility system'],
+        ['Sensors','Environmental sensing'],
+        ['Control','Wireless control']
+      ],
+      features:[
+        ['Designed for hazardous underground environments','◎'],
+        ['Remote operation keeps operator away from danger','♧'],
+        ['Terrain mobility for uneven mine surfaces','◈'],
+        ['Environmental monitoring capability','▤'],
+        ['Modular architecture for inspection payloads','△'],
+        ['Field inspection deployment','⌁']
+      ]
+    },
+    {
+      name:'LAND MINE ROVER', number:'ROVER 06', subtitle:'MINE DETECTION & HAZARD INSPECTION ROVER', image:'land.png',
+      specs:[
+        ['Platform','Mine detection rover'],
+        ['Navigation','Remote navigation'],
+        ['Drive','All-terrain mobility'],
+        ['Sensors','Detection sensor payload'],
+        ['Control','Remote operation']
+      ],
+      features:[
+        ['Designed for safer minefield inspection','◎'],
+        ['Remote operation for stand-off deployment','♧'],
+        ['Six-wheel traction for uneven terrain','◈'],
+        ['Modular detection sensor integration','▤'],
+        ['Built for hazardous-environment exploration','△'],
+        ['Mission-ready detection payloads','⌁']
+      ]
+    }
+  ];
+
+  let current = 0;
+
+  function renderFeatures(items){
+    return items.map(item => `
+      <li>
+        <span class="feature-icon" aria-hidden="true">${item[1]}</span>
+        <span class="feature-text"><strong>${item[0]}</strong></span>
+      </li>
+    `).join('');
+  }
+
+  function renderSpecs(items){
+    return items.map(item => `
+      <li>
+        <strong>${item[0]}</strong>
+        <span>${item[1]}</span>
+      </li>
+    `).join('');
+  }
+
+  function showRover(index){
+    current = (index + rovers.length) % rovers.length;
+    const rover = rovers[current];
+
+    garage.classList.add('rover-changing');
+
+    setTimeout(() => {
+      garage.style.backgroundImage = 'none';
+      garage.querySelector('.garage-rover-zone').style.backgroundImage = `url("${rover.image}")`;
+      nameEl.innerHTML = `${rover.name} <small>${rover.number}</small>`;
+      subtitleEl.textContent = rover.subtitle;
+      featuresEl.innerHTML = renderFeatures(rover.features);
+      specsEl.innerHTML = renderSpecs(rover.specs);
+      counterEl.textContent = `${String(current + 1).padStart(2,'0')} / ${String(rovers.length).padStart(2,'0')}`;
+      garage.classList.remove('rover-changing');
+    },120);
+  }
+
+  prevBtn.addEventListener('click', () => showRover(current - 1));
+  nextBtn.addEventListener('click', () => showRover(current + 1));
+
+  garage.addEventListener('keydown', e => {
+    if(e.key === 'ArrowLeft') showRover(current - 1);
+    if(e.key === 'ArrowRight') showRover(current + 1);
+  });
+
+  garage.tabIndex = 0;
+  showRover(0);
+})();
+
+/* ══ STATS COUNTER ══ */
+const statEls=document.querySelectorAll('.stat-num[data-target]');
+const countObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;countObs.unobserve(e.target);
+  const t=+e.target.dataset.target,dur=1600;let s=null;
+  const step=ts=>{if(!s)s=ts;const p=Math.min((ts-s)/dur,1),ease=1-Math.pow(1-p,3);
+    e.target.textContent=Math.round(ease*t);if(p<1)requestAnimationFrame(step);};
+  requestAnimationFrame(step);});},{threshold:.5});
+statEls.forEach(el=>countObs.observe(el));
+
+/* ══ SCROLL REVEAL ══ */
+const revObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');revObs.unobserve(e.target);}});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>revObs.observe(el));
+
+/* ══ DEPARTMENTS — CONNECTED TECHNICAL SYSTEM ══ */
+(function(){
+  const system=document.getElementById('ggSystem');
+  if(!system)return;
+  const cards=system.querySelectorAll('.gg-card');
+  cards.forEach((card,i)=>{
+    card.addEventListener('mouseenter',()=>{
+      const c=getComputedStyle(card).getPropertyValue('--c').trim() || '#00e5ff';
+      card.style.boxShadow=`0 0 0 1px ${c}33,0 0 28px ${c}22`;
+    });
+    card.addEventListener('mouseleave',()=>{card.style.boxShadow='';});
+    card.addEventListener('click',()=>{
+      cards.forEach(c=>c.classList.remove('dept-selected'));
+      card.classList.add('dept-selected');
+    });
+  });
+})();
+
+/* ══ CONTACT FORM — FORMSubmit ══ */
+const contactForm = document.getElementById('contactForm');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', function () {
+    const button = contactForm.querySelector('.form-submit');
+    if (button) {
+      button.textContent = 'SENDING...';
+      button.disabled = true;
+    }
+    // IMPORTANT: Do not call e.preventDefault().
+    // The browser must submit this form with POST to FormSubmit.
+  });
+}
+</script>
+</body>
+</html>
+<style>
+@media (max-width: 900px) { .comp-arena { grid-template-columns: 1fr; max-width: 720px; } }
+
+/* FINAL SIZE TUNING — slightly larger rover box while staying within one desktop viewport */
+@media (min-width:1051px){
+  #projects{
+    padding-top:.55rem !important;
+    padding-bottom:.65rem !important;
+  }
+  .projects-header{
+    padding-bottom:.45rem !important;
+  }
+  .projects-header h2{
+    font-size:clamp(1.75rem,3vw,2.85rem) !important;
+    margin-top:.2rem !important;
+  }
+  .projects-header p{
+    font-size:.62rem !important;
+  }
+  .garage-stage{
+    width:min(98vw,1460px) !important;
+    height:min(calc(100vh - 155px),740px) !important;
+    min-height:540px !important;
+  }
+  .garage-panel{
+    padding:1.55rem 1.5rem 3.15rem !important;
+  }
+  .garage-rover-name{
+    font-size:clamp(1.5rem,2.6vw,2.1rem) !important;
+  }
+  .garage-subtitle{
+    font-size:.62rem !important;
+  }
+  .garage-section-heading{
+    font-size:.8rem !important;
+  }
+  .garage-info-list.features-list li{
+    min-height:60px !important;
+    padding:.72rem .75rem !important;
+  }
+  .feature-icon{
+    width:29px !important;
+    height:29px !important;
+    flex-basis:29px !important;
+  }
+  .feature-text{
+    font-size:clamp(.63rem,.75vw,.76rem) !important;
+  }
+  .garage-info-list.specs-list li{
+    min-height:38px !important;
+    font-size:clamp(.63rem,.75vw,.76rem) !important;
+  }
+}
+
+
+/* === ROVER ARROWS: MOVE TO LEFT AND RIGHT SIDES === */
+.garage-arrow{
+  top:50%;
+  bottom:auto;
+  transform:translateY(-50%);
+}
+
+.garage-prev{
+  left:15px;
+  right:auto;
+}
+
+.garage-next{
+  right:15px;
+  left:auto;
+}
+
+/* Keep the arrows on the sides on smaller screens too */
+@media (max-width:800px){
+  .garage-arrow{
+    top:50%;
+    bottom:auto;
+    transform:translateY(-50%);
+  }
+  .garage-prev{
+    left:10px;
+    right:auto;
+  }
+  .garage-next{
+    right:10px;
+    left:auto;
+  }
+}
+
+@media (max-width:560px){
+  .garage-arrow{
+    top:50%;
+    bottom:auto;
+    transform:translateY(-50%);
+  }
+  .garage-prev{
+    left:10px;
+    right:auto;
+  }
+  .garage-next{
+    right:10px;
+    left:auto;
+  }
+}
+
+</style>
+<style>
+@media (max-width: 900px){.garage-rover-zone{background-size:125% auto;}}
+@media (max-width: 600px){.garage-rover-zone{background-size:115% auto;}}
+</style>
+<style>
+/* === ROVER COUNTER: PLACE NUMBERING UNDER THE GARAGE BOX === */
+#projects{
+  padding-bottom:3.2rem;
+}
+
+.garage-rover-counter{
+  position:relative !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  left:auto !important;
+  transform:none !important;
+  width:max-content;
+  min-width:58px;
+  margin:.65rem auto 0;
+  text-align:center;
+  color:#c58cff;
+  font-family:'Orbitron',sans-serif;
+  font-size:.5rem;
+  font-weight:600;
+  letter-spacing:.14em;
+  line-height:1.2;
+  text-transform:uppercase;
+  text-shadow:0 0 10px rgba(168,85,247,.35);
+  z-index:5;
+}
+
+@media (max-width:800px){
+  #projects{padding-bottom:3rem;}
+  .garage-rover-counter{
+    margin-top:.6rem;
+    min-width:55px;
+    font-size:.42rem;
+  }
+}
+
+@media (max-width:560px){
+  #projects{padding-bottom:2.8rem;}
+  .garage-rover-counter{
+    margin-top:.55rem;
+    min-width:50px;
+    font-size:.38rem;
+  }
+}
+</style>
